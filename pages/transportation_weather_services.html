@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transportation & Weather Services - AI Hotel Concierge</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Faihotelc1567back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.6"></script>
+</head>
+<body class="bg-surface min-h-screen font-inter">
+    <!-- Header with Hotel Logo -->
+    <header class="bg-white shadow-subtle sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 11 1.16-.21 2.31-.48 3.38-.84C18.68 26.12 22 21.67 22 17V7l-10-5z"/>
+                            <path d="M12 4.5L4.5 8.5v8.5c0 4.14 2.86 7.5 6.5 8.25V4.5h1z" fill="currentColor" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-semibold text-primary">Grand Palace Hotel</h1>
+                        <p class="text-xs text-text-secondary">Transportation & Weather</p>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 text-text-secondary" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="ai_concierge_chat_dashboard.html" class="nav-link">
+                        <i class="fas fa-comments mr-2"></i>Chat
+                    </a>
+                    <a href="local_recommendations_booking_hub.html" class="nav-link">
+                        <i class="fas fa-map-marked-alt mr-2"></i>Local Guide
+                    </a>
+                    <a href="transportation_weather_services.html" class="nav-link active">
+                        <i class="fas fa-car mr-2"></i>Transport
+                    </a>
+                    <a href="hotel_services_guest_support.html" class="nav-link">
+                        <i class="fas fa-concierge-bell mr-2"></i>Services
+                    </a>
+                </nav>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <nav class="md:hidden mt-4 hidden" id="mobileMenu">
+                <div class="flex flex-col space-y-2">
+                    <a href="ai_concierge_chat_dashboard.html" class="mobile-nav-link">
+                        <i class="fas fa-comments mr-3"></i>Chat Dashboard
+                    </a>
+                    <a href="local_recommendations_booking_hub.html" class="mobile-nav-link">
+                        <i class="fas fa-map-marked-alt mr-3"></i>Local Recommendations
+                    </a>
+                    <a href="transportation_weather_services.html" class="mobile-nav-link active">
+                        <i class="fas fa-car mr-3"></i>Transportation & Weather
+                    </a>
+                    <a href="hotel_services_guest_support.html" class="mobile-nav-link">
+                        <i class="fas fa-concierge-bell mr-3"></i>Hotel Services
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Weather Alert Banner -->
+    <div class="bg-warning-50 border-l-4 border-warning px-4 py-3" id="weatherAlert">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-exclamation-triangle text-warning"></i>
+                <div>
+                    <p class="text-sm font-medium text-warning-800">Weather Alert</p>
+                    <p class="text-xs text-warning-700">Heavy rain expected from 3:00 PM - 6:00 PM today</p>
+                </div>
+            </div>
+            <button class="text-warning-600 hover:text-warning-800" onclick="dismissAlert()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Current Weather Widget -->
+        <section class="mb-8">
+            <div class="conversation-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-semibold text-text-primary">Current Weather</h2>
+                    <button class="text-text-secondary hover:text-primary transition-colors" onclick="refreshWeather()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Current Conditions -->
+                    <div class="lg:col-span-2">
+                        <div class="flex items-center space-x-6">
+                            <div class="flex items-center space-x-4">
+                                <img src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=80&h=80&fit=crop&crop=center" alt="Weather" class="w-16 h-16 rounded-lg object-cover" />
+                                <div>
+                                    <div class="flex items-baseline space-x-2">
+                                        <span class="text-4xl font-semibold text-text-primary">28°C</span>
+                                        <span class="text-text-secondary">Partly Cloudy</span>
+                                    </div>
+                                    <p class="text-sm text-text-secondary mt-1">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>New Delhi, India
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-4 mt-6">
+                            <div class="text-center">
+                                <i class="fas fa-eye text-primary mb-2"></i>
+                                <p class="text-sm text-text-secondary">Visibility</p>
+                                <p class="font-medium">10 km</p>
+                            </div>
+                            <div class="text-center">
+                                <i class="fas fa-tint text-primary mb-2"></i>
+                                <p class="text-sm text-text-secondary">Humidity</p>
+                                <p class="font-medium">65%</p>
+                            </div>
+                            <div class="text-center">
+                                <i class="fas fa-wind text-primary mb-2"></i>
+                                <p class="text-sm text-text-secondary">Wind</p>
+                                <p class="font-medium">12 km/h</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hourly Forecast -->
+                    <div class="bg-surface rounded-lg p-4">
+                        <h3 class="font-medium text-text-primary mb-3">Next 6 Hours</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-text-secondary">2:00 PM</span>
+                                <div class="flex items-center space-x-2">
+                                    <img src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=24&h=24&fit=crop&crop=center" alt="Weather" class="w-6 h-6 rounded object-cover" />
+                                    <span class="text-sm font-medium">29°C</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-text-secondary">3:00 PM</span>
+                                <div class="flex items-center space-x-2">
+                                    <img src="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=24&h=24&fit=crop&crop=center" alt="Rain" class="w-6 h-6 rounded object-cover" />
+                                    <span class="text-sm font-medium">26°C</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-text-secondary">4:00 PM</span>
+                                <div class="flex items-center space-x-2">
+                                    <img src="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=24&h=24&fit=crop&crop=center" alt="Rain" class="w-6 h-6 rounded object-cover" />
+                                    <span class="text-sm font-medium">24°C</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-text-secondary">5:00 PM</span>
+                                <div class="flex items-center space-x-2">
+                                    <img src="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=24&h=24&fit=crop&crop=center" alt="Rain" class="w-6 h-6 rounded object-cover" />
+                                    <span class="text-sm font-medium">23°C</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Cards Grid -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Cab Booking Card -->
+            <div class="lg:col-span-2">
+                <div class="conversation-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-accent-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-taxi text-accent-600"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-text-primary">Book Cab</h3>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=32&h=32&fit=crop&crop=center" alt="Ola" class="w-8 h-8 rounded object-cover" />
+                            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=32&h=32&fit=crop&crop=center" alt="Uber" class="w-8 h-8 rounded object-cover" />
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Pickup Location -->
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Pickup Location</label>
+                            <div class="input-field bg-secondary-50 cursor-not-allowed">
+                                <i class="fas fa-map-marker-alt text-primary mr-2"></i>
+                                Grand Palace Hotel, Connaught Place, New Delhi
+                            </div>
+                        </div>
+                        
+                        <!-- Destination -->
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Destination</label>
+                            <div class="relative">
+                                <input type="text" id="destination" class="input-field pl-10" placeholder="Where would you like to go?" onkeyup="showDestinationSuggestions(this.value)" />
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                            </div>
+                            
+                            <!-- Destination Suggestions -->
+                            <div class="mt-2 space-y-1 hidden" id="destinationSuggestions">
+                                <button class="w-full text-left px-3 py-2 text-sm hover:bg-secondary-100 rounded-lg transition-colors" onclick="selectDestination('Indira Gandhi International Airport')">
+                                    <i class="fas fa-plane mr-2 text-primary"></i>Indira Gandhi International Airport
+                                </button>
+                                <button class="w-full text-left px-3 py-2 text-sm hover:bg-secondary-100 rounded-lg transition-colors" onclick="selectDestination('India Gate')">
+                                    <i class="fas fa-monument mr-2 text-accent-600"></i>India Gate
+                                </button>
+                                <button class="w-full text-left px-3 py-2 text-sm hover:bg-secondary-100 rounded-lg transition-colors" onclick="selectDestination('Red Fort')">
+                                    <i class="fas fa-fort-awesome mr-2 text-error"></i>Red Fort
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Destinations -->
+                        <div>
+                            <p class="text-sm font-medium text-text-primary mb-2">Quick Destinations</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button class="quick-action-pill" onclick="selectDestination('Indira Gandhi International Airport')">
+                                    <i class="fas fa-plane mr-1"></i>Airport
+                                </button>
+                                <button class="quick-action-pill" onclick="selectDestination('India Gate')">
+                                    <i class="fas fa-monument mr-1"></i>India Gate
+                                </button>
+                                <button class="quick-action-pill" onclick="selectDestination('Select City Walk Mall')">
+                                    <i class="fas fa-shopping-bag mr-1"></i>Mall
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Cab Options -->
+                        <div class="space-y-3" id="cabOptions" style="display: none;">
+                            <div class="border border-secondary-200 rounded-lg p-3 cursor-pointer hover:border-primary transition-colors" onclick="selectCabOption('ola-mini')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=40&h=40&fit=crop&crop=center" alt="Ola Mini" class="w-10 h-10 rounded object-cover" />
+                                        <div>
+                                            <p class="font-medium text-text-primary">Ola Mini</p>
+                                            <p class="text-sm text-text-secondary">4 mins away</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-semibold text-text-primary">₹180</p>
+                                        <p class="text-xs text-text-secondary">Est. fare</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="border border-secondary-200 rounded-lg p-3 cursor-pointer hover:border-primary transition-colors" onclick="selectCabOption('uber-go')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=40&h=40&fit=crop&crop=center" alt="Uber Go" class="w-10 h-10 rounded object-cover" />
+                                        <div>
+                                            <p class="font-medium text-text-primary">Uber Go</p>
+                                            <p class="text-sm text-text-secondary">6 mins away</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-semibold text-text-primary">₹195</p>
+                                        <p class="text-xs text-text-secondary">Est. fare</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-primary w-full" onclick="bookCab()" id="bookCabBtn">
+                            <i class="fas fa-car mr-2"></i>Get Fare Estimates
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Flight Status Card -->
+            <div class="conversation-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-plane text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-text-primary">Flight Status</h3>
+                    </div>
+                    <button class="text-text-secondary hover:text-primary transition-colors" onclick="addFlight()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4" id="flightList">
+                    <!-- Saved Flight -->
+                    <div class="border border-secondary-200 rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-text-primary">AI 131</span>
+                                <span class="status-success text-xs px-2 py-1 rounded-full">On Time</span>
+                            </div>
+                            <button class="text-text-secondary hover:text-error transition-colors" onclick="removeFlight('AI131')">
+                                <i class="fas fa-times text-xs"></i>
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <div>
+                                <p class="font-medium">DEL → BOM</p>
+                                <p class="text-text-secondary">Today, 6:30 PM</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-medium">Gate A12</p>
+                                <p class="text-text-secondary">Terminal 3</p>
+                            </div>
+                        </div>
+                        <div class="mt-2 flex items-center space-x-4">
+                            <label class="flex items-center space-x-2 text-xs">
+                                <input type="checkbox" class="rounded" checked />
+                                <span class="text-text-secondary">Delay alerts</span>
+                            </label>
+                            <label class="flex items-center space-x-2 text-xs">
+                                <input type="checkbox" class="rounded" />
+                                <span class="text-text-secondary">Gate changes</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Add Flight Button -->
+                    <button class="w-full border-2 border-dashed border-secondary-300 rounded-lg p-4 text-text-secondary hover:border-primary hover:text-primary transition-colors" onclick="showAddFlightForm()">
+                        <i class="fas fa-plus mr-2"></i>Track Another Flight
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Weather Forecast & Alerts -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- 5-Day Forecast -->
+            <div class="conversation-card">
+                <h3 class="text-xl font-semibold text-text-primary mb-4">5-Day Forecast</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between py-2">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm font-medium text-text-primary w-16">Today</span>
+                            <img src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=32&h=32&fit=crop&crop=center" alt="Weather" class="w-8 h-8 rounded object-cover" />
+                            <span class="text-sm text-text-secondary">Partly Cloudy</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium">32°</span>
+                            <span class="text-sm text-text-secondary">24°</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between py-2">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm font-medium text-text-primary w-16">Tomorrow</span>
+                            <img src="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=32&h=32&fit=crop&crop=center" alt="Rain" class="w-8 h-8 rounded object-cover" />
+                            <span class="text-sm text-text-secondary">Heavy Rain</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium">28°</span>
+                            <span class="text-sm text-text-secondary">22°</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between py-2">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm font-medium text-text-primary w-16">Wed</span>
+                            <img src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=32&h=32&fit=crop&crop=center" alt="Sunny" class="w-8 h-8 rounded object-cover" />
+                            <span class="text-sm text-text-secondary">Sunny</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium">35°</span>
+                            <span class="text-sm text-text-secondary">26°</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between py-2">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm font-medium text-text-primary w-16">Thu</span>
+                            <img src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=32&h=32&fit=crop&crop=center" alt="Sunny" class="w-8 h-8 rounded object-cover" />
+                            <span class="text-sm text-text-secondary">Sunny</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium">36°</span>
+                            <span class="text-sm text-text-secondary">27°</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between py-2">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm font-medium text-text-primary w-16">Fri</span>
+                            <img src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=32&h=32&fit=crop&crop=center" alt="Cloudy" class="w-8 h-8 rounded object-cover" />
+                            <span class="text-sm text-text-secondary">Cloudy</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium">33°</span>
+                            <span class="text-sm text-text-secondary">25°</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Weather Alerts Settings -->
+            <div class="conversation-card">
+                <h3 class="text-xl font-semibold text-text-primary mb-4">Weather Alerts</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 border border-secondary-200 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-cloud-rain text-primary"></i>
+                            <div>
+                                <p class="font-medium text-text-primary">Rain Alerts</p>
+                                <p class="text-sm text-text-secondary">Get notified before it rains</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked />
+                            <div class="w-11 h-6 bg-secondary-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 border border-secondary-200 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-thermometer-half text-error"></i>
+                            <div>
+                                <p class="font-medium text-text-primary">Temperature Alerts</p>
+                                <p class="text-sm text-text-secondary">Extreme temperature warnings</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" />
+                            <div class="w-11 h-6 bg-secondary-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 border border-secondary-200 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-wind text-accent-600"></i>
+                            <div>
+                                <p class="font-medium text-text-primary">Wind Alerts</p>
+                                <p class="text-sm text-text-secondary">High wind speed warnings</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked />
+                            <div class="w-11 h-6 bg-secondary-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 border border-secondary-200 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                            <div>
+                                <p class="font-medium text-text-primary">Severe Weather</p>
+                                <p class="text-sm text-text-secondary">Storm and severe weather alerts</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked />
+                            <div class="w-11 h-6 bg-secondary-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Active Booking Toast -->
+    <div class="fixed bottom-4 right-4 toast-notification hidden" id="bookingToast">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-car text-success text-sm"></i>
+            </div>
+            <div>
+                <p class="font-medium text-text-primary">Cab Booked Successfully!</p>
+                <p class="text-sm text-text-secondary">Driver arriving in 4 minutes</p>
+            </div>
+        </div>
+        <button class="ml-4 text-text-secondary hover:text-text-primary" onclick="hideToast('bookingToast')">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Add Flight Modal -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" id="addFlightModal">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-text-primary">Track Flight</h3>
+                <button class="text-text-secondary hover:text-text-primary" onclick="hideAddFlightForm()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-2">Flight Number</label>
+                    <input type="text" id="flightNumber" class="input-field" placeholder="e.g., AI 131" />
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-2">Date</label>
+                    <input type="date" id="flightDate" class="input-field" value="2025-08-03" />
+                </div>
+                
+                <div class="flex space-x-3">
+                    <button class="btn-secondary flex-1" onclick="hideAddFlightForm()">Cancel</button>
+                    <button class="btn-primary flex-1" onclick="addFlightToList()">
+                        <i class="fas fa-plus mr-2"></i>Track Flight
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .nav-link {
+            @apply text-text-secondary hover:text-primary transition-colors px-3 py-2 rounded-lg text-sm font-medium;
+        }
+        
+        .nav-link.active {
+            @apply text-primary bg-primary-50;
+        }
+        
+        .mobile-nav-link {
+            @apply text-text-secondary hover:text-primary transition-colors px-3 py-2 rounded-lg text-sm font-medium block;
+        }
+        
+        .mobile-nav-link.active {
+            @apply text-primary bg-primary-50;
+        }
+    </style>
+
+    <script>
+        let selectedDestination = '';
+        let selectedCabOption = '';
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function dismissAlert() {
+            document.getElementById('weatherAlert').style.display = 'none';
+        }
+
+        function refreshWeather() {
+            // Simulate weather refresh
+            const button = event.target;
+            button.classList.add('fa-spin');
+            setTimeout(() => {
+                button.classList.remove('fa-spin');
+                showToast('Weather updated successfully!', 'success');
+            }, 1000);
+        }
+
+        function showDestinationSuggestions(value) {
+            const suggestions = document.getElementById('destinationSuggestions');
+            if (value.length > 0) {
+                suggestions.classList.remove('hidden');
+            } else {
+                suggestions.classList.add('hidden');
+            }
+        }
+
+        function selectDestination(destination) {
+            selectedDestination = destination;
+            document.getElementById('destination').value = destination;
+            document.getElementById('destinationSuggestions').classList.add('hidden');
+            
+            // Show cab options
+            document.getElementById('cabOptions').style.display = 'block';
+            document.getElementById('bookCabBtn').innerHTML = '<i class="fas fa-car mr-2"></i>Book Selected Cab';
+        }
+
+        function selectCabOption(option) {
+            selectedCabOption = option;
+            
+            // Update UI to show selection
+            document.querySelectorAll('#cabOptions > div').forEach(div => {
+                div.classList.remove('border-primary', 'bg-primary-50');
+                div.classList.add('border-secondary-200');
+            });
+            
+            event.currentTarget.classList.remove('border-secondary-200');
+            event.currentTarget.classList.add('border-primary', 'bg-primary-50');
+        }
+
+        function bookCab() {
+            if (!selectedDestination) {
+                alert('Please select a destination first');
+                return;
+            }
+            
+            if (!selectedCabOption) {
+                alert('Please select a cab option');
+                return;
+            }
+            
+            // Simulate booking
+            document.getElementById('bookingToast').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('bookingToast').classList.add('hidden');
+            }, 5000);
+        }
+
+        function addFlight() {
+            showAddFlightForm();
+        }
+
+        function showAddFlightForm() {
+            document.getElementById('addFlightModal').classList.remove('hidden');
+            document.getElementById('addFlightModal').classList.add('flex');
+        }
+
+        function hideAddFlightForm() {
+            document.getElementById('addFlightModal').classList.add('hidden');
+            document.getElementById('addFlightModal').classList.remove('flex');
+        }
+
+        function addFlightToList() {
+            const flightNumber = document.getElementById('flightNumber').value;
+            const flightDate = document.getElementById('flightDate').value;
+            
+            if (!flightNumber || !flightDate) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // Add flight to list (simplified for demo)
+            showToast(`Flight ${flightNumber} added to tracking`, 'success');
+            hideAddFlightForm();
+        }
+
+        function removeFlight(flightNumber) {
+            if (confirm(`Remove ${flightNumber} from tracking?`)) {
+                event.target.closest('.border').remove();
+                showToast('Flight removed from tracking', 'success');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 toast-notification';
+            toast.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-${type}-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check text-${type} text-sm"></i>
+                    </div>
+                    <p class="font-medium text-text-primary">${message}</p>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function hideToast(toastId) {
+            document.getElementById(toastId).classList.add('hidden');
+        }
+
+        // Initialize with current time
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const dateInput = document.getElementById('flightDate');
+            if (dateInput) {
+                dateInput.value = now.toISOString().split('T')[0];
+            }
+        });
+
+        // Hide destination suggestions when clicking outside
+        document.addEventListener('click', function(event) {
+            const suggestions = document.getElementById('destinationSuggestions');
+            const destination = document.getElementById('destination');
+            
+            if (!suggestions.contains(event.target) && event.target !== destination) {
+                suggestions.classList.add('hidden');
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hotel Services & Guest Support - AI Hotel Concierge</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Faihotelc1567back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.6"></script>
+</head>
+<body class="bg-surface min-h-screen font-inter">
+    <!-- Header with Hotel Logo and Guest Info -->
+    <header class="bg-white shadow-subtle sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 11 1.16-.21 2.31-.48 3.38-.84C18.68 26.12 22 21.67 22 17V7l-10-5z"/>
+                            <path d="M12 4.5L4.5 8.5v8.5c0 4.14 2.86 7.5 6.5 8.25V4.5h1z" fill="currentColor" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-semibold text-primary">Grand Palace Hotel</h1>
+                        <p class="text-xs text-text-secondary">Hotel Services</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-text-primary">Room 1205</p>
+                        <p class="text-xs text-text-secondary" id="currentTime">09:48 AM</p>
+                    </div>
+                    <button class="w-8 h-8 bg-accent-100 rounded-full flex items-center justify-center" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars text-accent-600"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation Menu -->
+        <div class="bg-white border-t border-secondary-200 hidden" id="mobileMenu">
+            <nav class="max-w-7xl mx-auto px-4 py-3">
+                <div class="flex flex-wrap gap-2">
+                    <a href="ai_concierge_chat_dashboard.html" class="quick-action-pill">
+                        <i class="fas fa-comments mr-2"></i>AI Chat
+                    </a>
+                    <a href="local_recommendations_booking_hub.html" class="quick-action-pill">
+                        <i class="fas fa-map-marked-alt mr-2"></i>Local Guide
+                    </a>
+                    <a href="transportation_weather_services.html" class="quick-action-pill">
+                        <i class="fas fa-car mr-2"></i>Transport
+                    </a>
+                    <a href="hotel_services_guest_support.html" class="quick-action-pill bg-accent-50 border-accent-200">
+                        <i class="fas fa-concierge-bell mr-2"></i>Services
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Search Bar -->
+        <section class="mb-8">
+            <div class="relative max-w-2xl mx-auto">
+                <input type="text" id="serviceSearch" class="input-field pl-12 pr-4" placeholder="Search for hotel services, amenities, or ask a question..." />
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+                    <i class="fas fa-search text-text-secondary"></i>
+                </div>
+                <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-accent-600 hover:text-accent-700" onclick="clearSearch()">
+                    <i class="fas fa-times hidden" id="clearIcon"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Emergency Contacts Banner -->
+        <section class="mb-8">
+            <div class="conversation-card bg-error-50 border border-error-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-error rounded-full flex items-center justify-center">
+                            <i class="fas fa-phone text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-error">Emergency Contacts</h3>
+                            <p class="text-sm text-error-400">24/7 assistance available</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary bg-error hover:bg-error-500" onclick="showEmergencyContacts()">
+                        <i class="fas fa-phone mr-2"></i>View All
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Categories Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Room Service -->
+            <div class="conversation-card cursor-pointer" onclick="openServiceCategory('room-service')">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-utensils text-accent-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-text-primary">Room Service</h3>
+                        <p class="text-sm text-text-secondary">24/7 dining delivery</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-success font-medium">Available Now</span>
+                    <i class="fas fa-chevron-right text-text-secondary"></i>
+                </div>
+            </div>
+
+            <!-- Spa & Wellness -->
+            <div class="conversation-card cursor-pointer" onclick="openServiceCategory('spa-wellness')">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-spa text-primary text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-text-primary">Spa & Wellness</h3>
+                        <p class="text-sm text-text-secondary">Relaxation & treatments</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-warning font-medium">Open 6 AM - 10 PM</span>
+                    <i class="fas fa-chevron-right text-text-secondary"></i>
+                </div>
+            </div>
+
+            <!-- Concierge Services -->
+            <div class="conversation-card cursor-pointer" onclick="openServiceCategory('concierge')">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-concierge-bell text-success text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-text-primary">Concierge Services</h3>
+                        <p class="text-sm text-text-secondary">Personal assistance</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-success font-medium">Available 24/7</span>
+                    <i class="fas fa-chevron-right text-text-secondary"></i>
+                </div>
+            </div>
+
+            <!-- Facilities -->
+            <div class="conversation-card cursor-pointer" onclick="openServiceCategory('facilities')">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-12 h-12 bg-secondary-300 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-swimming-pool text-secondary-500 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-text-primary">Hotel Facilities</h3>
+                        <p class="text-sm text-text-secondary">Pool, gym, business center</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-primary font-medium">View Hours</span>
+                    <i class="fas fa-chevron-right text-text-secondary"></i>
+                </div>
+            </div>
+
+            <!-- Housekeeping -->
+            <div class="conversation-card cursor-pointer" onclick="openServiceCategory('housekeeping')">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-broom text-warning text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-text-primary">Housekeeping</h3>
+                        <p class="text-sm text-text-secondary">Room cleaning & supplies</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-success font-medium">Request Service</span>
+                    <i class="fas fa-chevron-right text-text-secondary"></i>
+                </div>
+            </div>
+
+            <!-- Business Services -->
+            <div class="conversation-card cursor-pointer" onclick="openServiceCategory('business')">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-briefcase text-accent-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-text-primary">Business Services</h3>
+                        <p class="text-sm text-text-secondary">Printing, meeting rooms</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-primary font-medium">Open 6 AM - 11 PM</span>
+                    <i class="fas fa-chevron-right text-text-secondary"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="mb-8">
+            <div class="conversation-card">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-question-circle text-primary text-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-text-primary">Frequently Asked Questions</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="faq-item">
+                        <button class="faq-question w-full text-left" onclick="toggleFAQ(0)">
+                            <div class="flex items-center justify-between p-4 bg-secondary-50 rounded-lg">
+                                <span class="font-medium text-text-primary">What are the check-in and check-out times?</span>
+                                <i class="fas fa-chevron-down transform transition-transform" id="faq-icon-0"></i>
+                            </div>
+                        </button>
+                        <div class="faq-answer hidden p-4 bg-white border border-secondary-200 rounded-lg mt-2">
+                            <p class="text-text-secondary">Check-in: 3:00 PM | Check-out: 12:00 PM. Early check-in and late check-out may be available upon request and subject to availability.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question w-full text-left" onclick="toggleFAQ(1)">
+                            <div class="flex items-center justify-between p-4 bg-secondary-50 rounded-lg">
+                                <span class="font-medium text-text-primary">What's the WiFi password?</span>
+                                <i class="fas fa-chevron-down transform transition-transform" id="faq-icon-1"></i>
+                            </div>
+                        </button>
+                        <div class="faq-answer hidden p-4 bg-white border border-secondary-200 rounded-lg mt-2">
+                            <p class="text-text-secondary">Network: GrandPalace_Guest | Password: Welcome2025! | For premium high-speed internet, contact the front desk.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question w-full text-left" onclick="toggleFAQ(2)">
+                            <div class="flex items-center justify-between p-4 bg-secondary-50 rounded-lg">
+                                <span class="font-medium text-text-primary">How do I access hotel amenities?</span>
+                                <i class="fas fa-chevron-down transform transition-transform" id="faq-icon-2"></i>
+                            </div>
+                        </button>
+                        <div class="faq-answer hidden p-4 bg-white border border-secondary-200 rounded-lg mt-2">
+                            <p class="text-text-secondary">Use your room key card to access the pool, gym, and spa areas. Business center requires front desk assistance. Pool hours: 6 AM - 10 PM.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question w-full text-left" onclick="toggleFAQ(3)">
+                            <div class="flex items-center justify-between p-4 bg-secondary-50 rounded-lg">
+                                <span class="font-medium text-text-primary">What dining options are available?</span>
+                                <i class="fas fa-chevron-down transform transition-transform" id="faq-icon-3"></i>
+                            </div>
+                        </button>
+                        <div class="faq-answer hidden p-4 bg-white border border-secondary-200 rounded-lg mt-2">
+                            <p class="text-text-secondary">Royal Restaurant (6 AM - 11 PM), Café Lounge (24/7), Room Service (24/7), and Rooftop Bar (5 PM - 1 AM). Special dietary requirements available.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button class="conversation-card text-center cursor-pointer" onclick="requestHousekeeping()">
+                <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-broom text-warning text-xl"></i>
+                </div>
+                <h4 class="font-medium text-text-primary mb-1">Request Cleaning</h4>
+                <p class="text-xs text-text-secondary">Schedule housekeeping</p>
+            </button>
+
+            <button class="conversation-card text-center cursor-pointer" onclick="orderRoomService()">
+                <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-utensils text-accent-600 text-xl"></i>
+                </div>
+                <h4 class="font-medium text-text-primary mb-1">Order Food</h4>
+                <p class="text-xs text-text-secondary">Room service menu</p>
+            </button>
+
+            <button class="conversation-card text-center cursor-pointer" onclick="bookSpa()">
+                <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-spa text-primary text-xl"></i>
+                </div>
+                <h4 class="font-medium text-text-primary mb-1">Book Spa</h4>
+                <p class="text-xs text-text-secondary">Wellness treatments</p>
+            </button>
+
+            <button class="conversation-card text-center cursor-pointer" onclick="contactConcierge()">
+                <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-concierge-bell text-success text-xl"></i>
+                </div>
+                <h4 class="font-medium text-text-primary mb-1">Concierge</h4>
+                <p class="text-xs text-text-secondary">Personal assistance</p>
+            </button>
+        </section>
+    </main>
+
+    <!-- Service Detail Modal -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" id="serviceModal">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+                <div class="sticky top-0 bg-white border-b border-secondary-200 p-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-semibold text-text-primary" id="modalTitle">Service Details</h3>
+                        <button class="text-text-secondary hover:text-text-primary" onclick="closeServiceModal()">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6" id="modalContent">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contacts Modal -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" id="emergencyModal">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full">
+                <div class="bg-error text-white p-4 rounded-t-lg">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold">Emergency Contacts</h3>
+                        <button class="text-white hover:text-error-100" onclick="closeEmergencyModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <a href="tel:+911234567890" class="flex items-center space-x-3 p-3 bg-error-50 rounded-lg hover:bg-error-100 transition-colors">
+                            <div class="w-10 h-10 bg-error rounded-full flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-white"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-error">Hotel Security</p>
+                                <p class="text-sm text-error-400">+91 123 456 7890</p>
+                            </div>
+                        </a>
+
+                        <a href="tel:+911234567891" class="flex items-center space-x-3 p-3 bg-error-50 rounded-lg hover:bg-error-100 transition-colors">
+                            <div class="w-10 h-10 bg-error rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-md text-white"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-error">Medical Emergency</p>
+                                <p class="text-sm text-error-400">+91 123 456 7891</p>
+                            </div>
+                        </a>
+
+                        <a href="tel:100" class="flex items-center space-x-3 p-3 bg-error-50 rounded-lg hover:bg-error-100 transition-colors">
+                            <div class="w-10 h-10 bg-error rounded-full flex items-center justify-center">
+                                <i class="fas fa-phone text-white"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-error">Police Emergency</p>
+                                <p class="text-sm text-error-400">100</p>
+                            </div>
+                        </a>
+
+                        <a href="tel:+911234567892" class="flex items-center space-x-3 p-3 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors">
+                            <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                                <i class="fas fa-concierge-bell text-white"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-primary">Front Desk</p>
+                                <p class="text-sm text-primary-400">+91 123 456 7892</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="fixed top-4 right-4 toast-notification hidden" id="successToast">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-success text-sm"></i>
+            </div>
+            <div>
+                <p class="font-medium text-text-primary" id="toastTitle">Request Submitted</p>
+                <p class="text-sm text-text-secondary" id="toastMessage">We'll get back to you shortly</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        // Update time every minute
+        setInterval(updateTime, 60000);
+        updateTime();
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Search functionality
+        document.getElementById('serviceSearch').addEventListener('input', function() {
+            const query = this.value.trim();
+            const clearIcon = document.getElementById('clearIcon');
+            
+            if (query.length > 0) {
+                clearIcon.classList.remove('hidden');
+                // Implement search logic here
+                searchServices(query);
+            } else {
+                clearIcon.classList.add('hidden');
+            }
+        });
+
+        function clearSearch() {
+            document.getElementById('serviceSearch').value = '';
+            document.getElementById('clearIcon').classList.add('hidden');
+        }
+
+        function searchServices(query) {
+            // Implement search functionality
+            console.log('Searching for:', query);
+        }
+
+        // FAQ toggle
+        function toggleFAQ(index) {
+            const answer = document.querySelector(`#faq-icon-${index}`).closest('.faq-item').querySelector('.faq-answer');
+            const icon = document.getElementById(`faq-icon-${index}`);
+            
+            answer.classList.toggle('hidden');
+            icon.style.transform = answer.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
+        // Service category functions
+        function openServiceCategory(category) {
+            const modal = document.getElementById('serviceModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            // Set content based on category
+            switch(category) {
+                case 'room-service':
+                    title.textContent = 'Room Service Menu';
+                    content.innerHTML = getRoomServiceContent();
+                    break;
+                case 'spa-wellness':
+                    title.textContent = 'Spa & Wellness Services';
+                    content.innerHTML = getSpaContent();
+                    break;
+                case 'concierge':
+                    title.textContent = 'Concierge Services';
+                    content.innerHTML = getConciergeContent();
+                    break;
+                case 'facilities':
+                    title.textContent = 'Hotel Facilities';
+                    content.innerHTML = getFacilitiesContent();
+                    break;
+                case 'housekeeping':
+                    title.textContent = 'Housekeeping Services';
+                    content.innerHTML = getHousekeepingContent();
+                    break;
+                case 'business':
+                    title.textContent = 'Business Services';
+                    content.innerHTML = getBusinessContent();
+                    break;
+            }
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeServiceModal() {
+            document.getElementById('serviceModal').classList.add('hidden');
+        }
+
+        // Emergency contacts modal
+        function showEmergencyContacts() {
+            document.getElementById('emergencyModal').classList.remove('hidden');
+        }
+
+        function closeEmergencyModal() {
+            document.getElementById('emergencyModal').classList.add('hidden');
+        }
+
+        // Quick action functions
+        function requestHousekeeping() {
+            showToast('Housekeeping Requested', 'Service will arrive within 30 minutes');
+        }
+
+        function orderRoomService() {
+            openServiceCategory('room-service');
+        }
+
+        function bookSpa() {
+            openServiceCategory('spa-wellness');
+        }
+
+        function contactConcierge() {
+            window.location.href = 'ai_concierge_chat_dashboard.html';
+        }
+
+        // Toast notification
+        function showToast(title, message) {
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            document.getElementById('successToast').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('successToast').classList.add('hidden');
+            }, 3000);
+        }
+
+        // Content generators for different services
+        function getRoomServiceContent() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Room Service" class="w-16 h-16 rounded-lg object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;">
+                        <div>
+                            <h4 class="font-semibold text-text-primary">24/7 Room Service</h4>
+                            <p class="text-sm text-text-secondary">Delivery to Room 1205 • Est. 25-35 mins</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <h5 class="font-medium text-text-primary mb-3">Breakfast Menu</h5>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Continental Breakfast</span>
+                                    <span class="text-sm font-medium">₹850</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Indian Breakfast Thali</span>
+                                    <span class="text-sm font-medium">₹650</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Fresh Fruit Platter</span>
+                                    <span class="text-sm font-medium">₹450</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <h5 class="font-medium text-text-primary mb-3">Main Course</h5>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Butter Chicken with Naan</span>
+                                    <span class="text-sm font-medium">₹1,200</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Grilled Salmon</span>
+                                    <span class="text-sm font-medium">₹1,800</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Vegetarian Biryani</span>
+                                    <span class="text-sm font-medium">₹950</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary w-full" onclick="placeOrder()">
+                        <i class="fas fa-shopping-cart mr-2"></i>Place Order
+                    </button>
+                </div>
+            `;
+        }
+
+        function getSpaContent() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="https://images.pixabay.com/photos/2016/11/08/05/26/woman-1807533_960_720.jpg?auto=compress&cs=tinysrgb&w=400" alt="Spa Services" class="w-16 h-16 rounded-lg object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;">
+                        <div>
+                            <h4 class="font-semibold text-text-primary">Serenity Spa</h4>
+                            <p class="text-sm text-text-secondary">Open 6:00 AM - 10:00 PM</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h5 class="font-medium text-text-primary">Swedish Massage</h5>
+                                <span class="text-accent-600 font-semibold">₹3,500</span>
+                            </div>
+                            <p class="text-sm text-text-secondary mb-3">60 minutes • Full body relaxation massage</p>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs bg-success-100 text-success px-2 py-1 rounded">Available Today</span>
+                                <span class="text-xs text-text-secondary">Next: 2:00 PM</span>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h5 class="font-medium text-text-primary">Ayurvedic Treatment</h5>
+                                <span class="text-accent-600 font-semibold">₹4,200</span>
+                            </div>
+                            <p class="text-sm text-text-secondary mb-3">90 minutes • Traditional healing therapy</p>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs bg-warning-100 text-warning px-2 py-1 rounded">Limited Slots</span>
+                                <span class="text-xs text-text-secondary">Next: 4:30 PM</span>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h5 class="font-medium text-text-primary">Couple's Package</h5>
+                                <span class="text-accent-600 font-semibold">₹6,800</span>
+                            </div>
+                            <p class="text-sm text-text-secondary mb-3">120 minutes • Side-by-side massage experience</p>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs bg-success-100 text-success px-2 py-1 rounded">Available</span>
+                                <span class="text-xs text-text-secondary">Next: 6:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary w-full" onclick="bookSpaAppointment()">
+                        <i class="fas fa-calendar-plus mr-2"></i>Book Appointment
+                    </button>
+                </div>
+            `;
+        }
+
+        function getConciergeContent() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" alt="Concierge" class="w-16 h-16 rounded-lg object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;">
+                        <div>
+                            <h4 class="font-semibold text-text-primary">Personal Concierge</h4>
+                            <p class="text-sm text-text-secondary">Available 24/7 for assistance</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-3">
+                            <h5 class="font-medium text-text-primary">Travel Services</h5>
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-plane text-primary text-sm"></i>
+                                    <span class="text-sm">Flight bookings & changes</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-car text-primary text-sm"></i>
+                                    <span class="text-sm">Airport transfers</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-map-marked-alt text-primary text-sm"></i>
+                                    <span class="text-sm">Local tour arrangements</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <h5 class="font-medium text-text-primary">Entertainment</h5>
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-ticket-alt text-primary text-sm"></i>
+                                    <span class="text-sm">Event & show tickets</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-utensils text-primary text-sm"></i>
+                                    <span class="text-sm">Restaurant reservations</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-shopping-bag text-primary text-sm"></i>
+                                    <span class="text-sm">Shopping assistance</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-accent-50 border border-accent-200 rounded-lg p-4">
+                        <h5 class="font-medium text-accent-700 mb-2">Special Requests</h5>
+                        <p class="text-sm text-accent-600">Our concierge team can assist with special occasions, business needs, and personalized experiences. Contact us for custom arrangements.</p>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button class="btn-primary flex-1" onclick="callConcierge()">
+                            <i class="fas fa-phone mr-2"></i>Call Now
+                        </button>
+                        <button class="btn-secondary flex-1" onclick="chatWithConcierge()">
+                            <i class="fas fa-comments mr-2"></i>Chat
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getFacilitiesContent() {
+            return `
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <i class="fas fa-swimming-pool text-primary text-xl"></i>
+                                <h5 class="font-medium text-text-primary">Swimming Pool</h5>
+                            </div>
+                            <p class="text-sm text-text-secondary mb-2">Rooftop infinity pool with city views</p>
+                            <p class="text-xs text-success font-medium">Open: 6:00 AM - 10:00 PM</p>
+                        </div>
+                        
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <i class="fas fa-dumbbell text-primary text-xl"></i>
+                                <h5 class="font-medium text-text-primary">Fitness Center</h5>
+                            </div>
+                            <p class="text-sm text-text-secondary mb-2">24/7 gym with modern equipment</p>
+                            <p class="text-xs text-success font-medium">Open: 24 Hours</p>
+                        </div>
+                        
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <i class="fas fa-briefcase text-primary text-xl"></i>
+                                <h5 class="font-medium text-text-primary">Business Center</h5>
+                            </div>
+                            <p class="text-sm text-text-secondary mb-2">Printing, scanning, meeting rooms</p>
+                            <p class="text-xs text-warning font-medium">Open: 6:00 AM - 11:00 PM</p>
+                        </div>
+                        
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <i class="fas fa-wine-glass-alt text-primary text-xl"></i>
+                                <h5 class="font-medium text-text-primary">Rooftop Bar</h5>
+                            </div>
+                            <p class="text-sm text-text-secondary mb-2">Premium cocktails & city skyline</p>
+                            <p class="text-xs text-accent-600 font-medium">Open: 5:00 PM - 1:00 AM</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-primary-50 border border-primary-200 rounded-lg p-4">
+                        <h5 class="font-medium text-primary mb-2">Access Information</h5>
+                        <p class="text-sm text-primary-600">Use your room key card to access all facilities. Some services may require advance booking or have additional charges.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getHousekeepingContent() {
+            return `
+                <div class="space-y-6">
+                    <div class="space-y-4">
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <h5 class="font-medium text-text-primary mb-3">Standard Cleaning</h5>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Daily housekeeping</span>
+                                    <span class="text-sm text-success">Included</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Towel replacement</span>
+                                    <span class="text-sm text-success">Included</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Bed making</span>
+                                    <span class="text-sm text-success">Included</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <h5 class="font-medium text-text-primary mb-3">Additional Services</h5>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Extra cleaning</span>
+                                    <span class="text-sm font-medium">₹500</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Laundry service</span>
+                                    <span class="text-sm font-medium">₹200/item</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Express cleaning</span>
+                                    <span class="text-sm font-medium">₹800</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-warning-50 border border-warning-200 rounded-lg p-4">
+                        <h5 class="font-medium text-warning-700 mb-2">Service Hours</h5>
+                        <p class="text-sm text-warning-600">Standard housekeeping: 9:00 AM - 5:00 PM<br>Express service available 24/7 with additional charges</p>
+                    </div>
+                    
+                    <button class="btn-primary w-full" onclick="requestHousekeepingService()">
+                        <i class="fas fa-broom mr-2"></i>Request Service
+                    </button>
+                </div>
+            `;
+        }
+
+        function getBusinessContent() {
+            return `
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <h5 class="font-medium text-text-primary mb-3">Printing Services</h5>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Black & White</span>
+                                    <span class="text-sm font-medium">₹5/page</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Color Printing</span>
+                                    <span class="text-sm font-medium">₹15/page</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Scanning</span>
+                                    <span class="text-sm font-medium">₹10/page</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <h5 class="font-medium text-text-primary mb-3">Meeting Rooms</h5>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Small (4 people)</span>
+                                    <span class="text-sm font-medium">₹1,500/hr</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Medium (8 people)</span>
+                                    <span class="text-sm font-medium">₹2,500/hr</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm">Large (15 people)</span>
+                                    <span class="text-sm font-medium">₹4,000/hr</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-accent-50 border border-accent-200 rounded-lg p-4">
+                        <h5 class="font-medium text-accent-700 mb-2">Equipment Available</h5>
+                        <div class="grid grid-cols-2 gap-2 text-sm text-accent-600">
+                            <div>• Projectors</div>
+                            <div>• Video conferencing</div>
+                            <div>• Whiteboards</div>
+                            <div>• High-speed WiFi</div>
+                            <div>• Flipcharts</div>
+                            <div>• Audio systems</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary w-full" onclick="bookMeetingRoom()">
+                        <i class="fas fa-calendar-plus mr-2"></i>Book Meeting Room
+                    </button>
+                </div>
+            `;
+        }
+
+        // Service booking functions
+        function placeOrder() {
+            showToast('Order Placed', 'Your food will be delivered in 25-35 minutes');
+            closeServiceModal();
+        }
+
+        function bookSpaAppointment() {
+            showToast('Appointment Requested', 'We will confirm your booking within 5 minutes');
+            closeServiceModal();
+        }
+
+        function callConcierge() {
+            window.location.href = 'tel:+911234567892';
+        }
+
+        function chatWithConcierge() {
+            window.location.href = 'ai_concierge_chat_dashboard.html';
+        }
+
+        function requestHousekeepingService() {
+            showToast('Service Requested', 'Housekeeping will arrive within 30 minutes');
+            closeServiceModal();
+        }
+
+        function bookMeetingRoom() {
+            showToast('Booking Request Sent', 'We will confirm availability shortly');
+            closeServiceModal();
+        }
+
+        // Close modals when clicking outside
+        document.getElementById('serviceModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeServiceModal();
+            }
+        });
+
+        document.getElementById('emergencyModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEmergencyModal();
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

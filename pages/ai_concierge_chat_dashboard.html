@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Concierge Chat - Grand Palace Hotel</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    
+    <!-- Load configuration and services -->
+    <script src="../public/js/config.js"></script>
+    <script src="../public/js/openai-service.js"></script>
+    <script src="../public/js/weather-service.js"></script>
+    <script src="../public/js/maps-service.js"></script>
+    
+    <!-- Google Maps API (loaded dynamically by maps service) -->
+    <meta name="google-maps-api" content="loaded-by-service" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Faihotelc1567back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.6"></script>
+</head>
+<body class="bg-surface min-h-screen font-inter">
+<!-- Header with Guest Info -->
+<header class="bg-white shadow-subtle sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+            <!-- Hotel Logo & Guest Info -->
+            <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 10 9 11 1.16-.21 2.31-.48 3.38-.84C18.68 26.12 22 21.67 22 17V7l-10-5z"/>
+                        <path d="M12 4.5L4.5 8.5v8.5c0 4.14 2.86 7.5 6.5 8.25V4.5h1z" fill="currentColor" opacity="0.7"/>
+                    </svg>
+                </div>
+                <div class="hidden sm:block">
+                    <h1 class="text-lg font-semibold text-primary">Grand Palace Hotel</h1>
+                    <div class="flex items-center space-x-3 text-sm text-text-secondary">
+                        <span id="guestName">John Smith</span>
+                        <span class="w-1 h-1 bg-secondary-300 rounded-full"></span>
+                        <span id="roomNumber">Room 1205</span>
+                        <span class="w-1 h-1 bg-secondary-300 rounded-full"></span>
+                        <span class="text-accent">Chat with Sarah</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Language Toggle & Menu -->
+            <div class="flex items-center space-x-3">
+                <div class="language-selector">
+                    <button class="language-btn active" data-lang="en" onclick="switchLanguage('en')">
+                        <img src="https://images.unsplash.com/photo-1520637836862-4d197d17c93a?w=24&h=18&fit=crop&crop=center" alt="English" class="w-4 h-3 rounded object-cover" />
+                        <span class="hidden sm:inline ml-1">EN</span>
+                    </button>
+                    <button class="language-btn" data-lang="hi" onclick="switchLanguage('hi')">
+                        <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=24&h=18&fit=crop&crop=center" alt="Hindi" class="w-4 h-3 rounded object-cover" />
+                        <span class="hidden sm:inline ml-1">हि</span>
+                    </button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="sm:hidden p-2 text-text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
+    <div class="fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform translate-x-full transition-transform duration-300 z-50" id="mobileMenu">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-primary">Navigation</h3>
+                <button onclick="toggleMobileMenu()" class="p-2 text-text-secondary hover:text-primary">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="space-y-4">
+                <a href="ai_concierge_chat_dashboard.html" class="nav-link active">
+                    <i class="fas fa-comments mr-3"></i>
+                    AI Concierge Chat
+                </a>
+                <a href="local_recommendations_booking_hub.html" class="nav-link">
+                    <i class="fas fa-map-marked-alt mr-3"></i>
+                    Local Recommendations
+                </a>
+                <a href="transportation_weather_services.html" class="nav-link">
+                    <i class="fas fa-car mr-3"></i>
+                    Transportation & Weather
+                </a>
+                <a href="hotel_services_guest_support.html" class="nav-link">
+                    <i class="fas fa-concierge-bell mr-3"></i>
+                    Hotel Services
+                </a>
+                <a href="guest_authentication_profile_setup.html" class="nav-link">
+                    <i class="fas fa-user-cog mr-3"></i>
+                    Profile Settings
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Chat Interface -->
+    <main class="flex flex-col h-screen pt-20 pb-4">
+<!-- Desktop Sidebar -->
+<div class="hidden lg:flex fixed left-0 top-20 h-full w-80 bg-white shadow-subtle">
+    <div class="w-full p-6">
+        <!-- Concierge Introduction -->
+        <div class="mb-6 text-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-accent to-accent-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-user-tie text-white text-xl"></i>
+            </div>
+            <h3 class="font-semibold text-text-primary">Sarah Thompson</h3>
+            <p class="text-sm text-text-secondary">Your Personal Concierge</p>
+            <p class="text-xs text-accent mt-1">5+ years of experience</p>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mb-6">
+            <h3 class="text-sm font-semibold text-text-primary mb-3 uppercase tracking-wide">Quick Actions</h3>
+            <div class="space-y-2">
+                <button class="quick-action-btn" onclick="sendQuickMessage('Hi Sarah! Can you book a cab for me?')">
+                    <i class="fas fa-taxi text-accent-600"></i>
+                    <span>Book Cab</span>
+                </button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Sarah, what is the weather like today?')">
+                    <i class="fas fa-cloud-sun text-primary"></i>
+                    <span>Weather Update</span>
+                </button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Sarah, can you recommend some great restaurants nearby?')">
+                    <i class="fas fa-utensils text-error"></i>
+                    <span>Restaurant Recommendations</span>
+                </button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Hi Sarah, can you tell me about hotel services?')">
+                    <i class="fas fa-concierge-bell text-success"></i>
+                    <span>Hotel Services</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Guest Preferences -->
+        <div class="mb-6">
+            <h3 class="text-sm font-semibold text-text-primary mb-3 uppercase tracking-wide">Your Preferences</h3>
+            <div class="space-y-3">
+                <div class="preference-item">
+                    <i class="fas fa-leaf text-success"></i>
+                    <span>Vegetarian</span>
+                </div>
+                <div class="preference-item">
+                    <i class="fas fa-bell text-primary"></i>
+                    <span>Notifications On</span>
+                </div>
+                <div class="preference-item">
+                    <i class="fas fa-map-marker-alt text-error"></i>
+                    <span>Location Services</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div>
+            <h3 class="text-sm font-semibold text-text-primary mb-3 uppercase tracking-wide">Services</h3>
+            <nav class="space-y-2">
+                <a href="local_recommendations_booking_hub.html" class="sidebar-nav-link">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Local Guide</span>
+                </a>
+                <a href="transportation_weather_services.html" class="sidebar-nav-link">
+                    <i class="fas fa-car"></i>
+                    <span>Transportation</span>
+                </a>
+                <a href="hotel_services_guest_support.html" class="sidebar-nav-link">
+                    <i class="fas fa-concierge-bell"></i>
+                    <span>Hotel Services</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+</div>
+
+        <!-- Chat Container -->
+        <div class="flex-1 lg:ml-80 flex flex-col max-w-4xl mx-auto w-full px-4">
+<!-- Chat Messages Area -->
+<div class="flex-1 overflow-y-auto mb-4" id="chatMessages">
+    <!-- Welcome Message -->
+    <div class="flex items-start space-x-3 mb-6">
+        <div class="w-10 h-10 bg-gradient-to-br from-accent to-accent-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-user-tie text-white text-sm"></i>
+        </div>
+        <div class="message-bubble message-bubble-ai max-w-md">
+            <p class="mb-2">Good morning, John! I'm Sarah, your personal concierge here at Grand Palace Hotel. I'm absolutely delighted to help make your stay wonderful! What can I do for you today? 😊</p>
+            <div class="text-xs text-text-secondary mt-2">
+                <i class="fas fa-clock mr-1"></i>
+                <span id="welcomeTime">Today, 9:48 AM</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sample Conversation -->
+    <div class="space-y-4" id="conversationHistory">
+        <!-- User Message -->
+        <div class="flex justify-end mb-4">
+            <div class="message-bubble message-bubble-user">
+                <p>What's the weather like today?</p>
+                <div class="text-xs text-primary-100 mt-2">
+                    <span>9:45 AM</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Response with Weather Card -->
+        <div class="flex items-start space-x-3 mb-6">
+            <div class="w-10 h-10 bg-gradient-to-br from-accent to-accent-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-user-tie text-white text-sm"></i>
+            </div>
+            <div class="max-w-md">
+                <div class="message-bubble message-bubble-ai mb-3">
+                    <p>Oh, I just checked for you! It's looking absolutely beautiful today - perfect weather for exploring! Here are the details:</p>
+                </div>
+                <!-- Weather Card -->
+                <div class="weather-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <img src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=60&h=60&fit=crop&crop=center" alt="Sunny weather" class="w-12 h-12 rounded-lg object-cover" />
+                            <div>
+                                <h4 class="font-semibold text-text-primary">Sunny</h4>
+                                <p class="text-sm text-text-secondary">Clear skies</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-primary">28°C</div>
+                            <div class="text-sm text-text-secondary">Feels like 31°C</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-eye text-primary"></i>
+                            <span>Visibility: 10km</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-tint text-primary"></i>
+                            <span>Humidity: 65%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xs text-text-secondary mt-2">
+                    <i class="fas fa-clock mr-1"></i>
+                    <span>9:45 AM</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Action Chips (Mobile) -->
+<div class="lg:hidden mb-4">
+    <div class="flex space-x-2 overflow-x-auto pb-2">
+        <button class="quick-action-pill flex-shrink-0" onclick="sendQuickMessage('Hi Sarah! Can you book a cab for me?')">
+            <i class="fas fa-taxi mr-2"></i>
+            Book Cab
+        </button>
+        <button class="quick-action-pill flex-shrink-0" onclick="sendQuickMessage('Sarah, what is the weather like today?')">
+            <i class="fas fa-cloud-sun mr-2"></i>
+            Weather
+        </button>
+        <button class="quick-action-pill flex-shrink-0" onclick="sendQuickMessage('Sarah, can you recommend some restaurants?')">
+            <i class="fas fa-utensils mr-2"></i>
+            Restaurants
+        </button>
+        <button class="quick-action-pill flex-shrink-0" onclick="sendQuickMessage('Hi Sarah, tell me about hotel services')">
+            <i class="fas fa-concierge-bell mr-2"></i>
+            Services
+        </button>
+    </div>
+</div>
+
+            <!-- Voice Transcription Display -->
+            <div class="voice-transcription hidden" id="voiceTranscription">
+                <div class="flex items-center space-x-3 p-3 bg-accent-50 border border-accent-200 rounded-lg mb-4">
+                    <div class="voice-indicator"></div>
+                    <div class="flex-1">
+                        <p class="text-sm text-text-secondary mb-1">Listening...</p>
+                        <p class="font-medium text-text-primary" id="transcriptionText">Say something...</p>
+                    </div>
+                    <div class="confidence-indicator">
+                        <div class="text-xs text-text-secondary">
+                            <span id="confidenceLevel">95%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!-- Input Area -->
+<div class="bg-white rounded-lg shadow-conversation p-4">
+    <div class="flex items-end space-x-3">
+        <!-- Voice Input Button -->
+        <button class="voice-btn" id="voiceBtn" onclick="toggleVoiceInput()">
+            <i class="fas fa-microphone" id="voiceIcon"></i>
+        </button>
+
+        <!-- Text Input -->
+        <div class="flex-1">
+            <textarea id="messageInput" class="input-field resize-none" rows="1" placeholder="Chat with Sarah, your personal concierge..." onkeypress="handleKeyPress(event)" oninput="autoResize(this)"></textarea>
+        </div>
+
+        <!-- Send Button -->
+        <button class="send-btn" onclick="sendMessage()" id="sendBtn">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div class="fixed top-24 right-4 space-y-2 z-30" id="toastContainer">
+        <!-- Sample notification -->
+        <div class="toast-notification hidden" id="flightAlert">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-warning-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-plane text-warning text-sm"></i>
+                </div>
+                <div>
+                    <p class="font-medium text-text-primary">Flight Update</p>
+                    <p class="text-sm text-text-secondary">Your flight AI-101 is delayed by 30 minutes</p>
+                </div>
+                <button onclick="dismissToast('flightAlert')" class="text-text-secondary hover:text-text-primary">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .language-btn {
+            @apply flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 ease-out cursor-pointer border border-transparent;
+        }
+        
+        .language-btn.active {
+            @apply bg-primary text-white;
+        }
+        
+        .language-btn:hover:not(.active) {
+            @apply bg-secondary-100 border-secondary-200;
+        }
+        
+        .nav-link {
+            @apply flex items-center px-4 py-3 rounded-lg text-text-secondary hover:text-primary hover:bg-primary-50 transition-all duration-150 ease-out;
+        }
+        
+        .nav-link.active {
+            @apply text-primary bg-primary-50 border-l-4 border-primary;
+        }
+        
+        .quick-action-btn {
+            @apply w-full flex items-center space-x-3 p-3 rounded-lg bg-secondary-50 hover:bg-secondary-100 text-text-primary transition-all duration-150 ease-out cursor-pointer;
+        }
+        
+        .preference-item {
+            @apply flex items-center space-x-3 text-sm text-text-secondary;
+        }
+        
+        .sidebar-nav-link {
+            @apply flex items-center space-x-3 p-2 rounded-lg text-text-secondary hover:text-primary hover:bg-primary-50 transition-all duration-150 ease-out;
+        }
+        
+        .weather-card {
+            @apply bg-white border border-secondary-200 rounded-lg p-4 shadow-sm;
+        }
+        
+        .voice-btn {
+            @apply w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center transition-all duration-150 ease-out cursor-pointer hover:bg-accent-700;
+        }
+        
+        .voice-btn.recording {
+            @apply bg-error animate-pulse;
+        }
+        
+        .send-btn {
+            @apply w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center transition-all duration-150 ease-out cursor-pointer hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed;
+        }
+        
+        .voice-transcription {
+            @apply animate-fade-in;
+        }
+        
+        .confidence-indicator {
+            @apply text-right;
+        }
+        
+        #chatMessages {
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E0 transparent;
+        }
+        
+        #chatMessages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        #chatMessages::-webkit-scrollbar-thumb {
+            background-color: #CBD5E0;
+            border-radius: 3px;
+        }
+    </style>
+
+    <script>
+    let isRecording = false;
+    let currentLanguage = 'en';
+    let recognition = null;
+    let conversationHistory = [];
+    
+    // Initialize services
+    let openAIService = null;
+    let weatherService = null;
+    let mapsService = null;
+
+    // Initialize all services
+    async function initializeServices() {
+        try {
+            // Load configuration first
+            if (typeof CONFIG === 'undefined') {
+                console.warn('Configuration not loaded, using fallback');
+            }
+            
+            // Initialize OpenAI service
+            openAIService = new OpenAIService();
+            weatherService = new WeatherService();
+            mapsService = new MapsService();
+            
+            console.log('All services initialized successfully');
+        } catch (error) {
+            console.error('Error initializing services:', error);
+        }
+    }
+
+    // Initialize speech recognition
+    function initializeSpeechRecognition() {
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = currentLanguage === 'hi' ? 'hi-IN' : 'en-US';
+
+            recognition.onstart = function() {
+                isRecording = true;
+                updateVoiceButton();
+                showVoiceTranscription();
+            };
+
+            recognition.onresult = function(event) {
+                let transcript = '';
+                let confidence = 0;
+                
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                    confidence = Math.round(event.results[i][0].confidence * 100);
+                }
+                
+                document.getElementById('transcriptionText').textContent = transcript;
+                document.getElementById('confidenceLevel').textContent = confidence + '%';
+                
+                if (event.results[event.results.length - 1].isFinal) {
+                    document.getElementById('messageInput').value = transcript;
+                    hideVoiceTranscription();
+                    if (transcript.trim()) {
+                        sendMessage();
+                    }
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                isRecording = false;
+                updateVoiceButton();
+                hideVoiceTranscription();
+                showToast('Voice recognition error. Please try again.', 'error');
+            };
+
+            recognition.onend = function() {
+                isRecording = false;
+                updateVoiceButton();
+                hideVoiceTranscription();
+            };
+        }
+    }
+
+    function toggleVoiceInput() {
+        if (!recognition) {
+            showToast('Speech recognition is not supported in your browser', 'warning');
+            return;
+        }
+
+        if (isRecording) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    }
+
+    function updateVoiceButton() {
+        const voiceBtn = document.getElementById('voiceBtn');
+        const voiceIcon = document.getElementById('voiceIcon');
+        
+        if (isRecording) {
+            voiceBtn.classList.add('recording');
+            voiceIcon.className = 'fas fa-stop';
+        } else {
+            voiceBtn.classList.remove('recording');
+            voiceIcon.className = 'fas fa-microphone';
+        }
+    }
+
+    function showVoiceTranscription() {
+        document.getElementById('voiceTranscription').classList.remove('hidden');
+    }
+
+    function hideVoiceTranscription() {
+        document.getElementById('voiceTranscription').classList.add('hidden');
+    }
+
+    function switchLanguage(lang) {
+        currentLanguage = lang;
+        
+        // Update active language button
+        document.querySelectorAll('.language-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+        
+        // Update speech recognition language
+        if (recognition) {
+            recognition.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
+        }
+        
+        // Update OpenAI service language
+        if (openAIService) {
+            openAIService.setLanguage(lang);
+        }
+        
+        // Update interface language
+        updateInterfaceLanguage(lang);
+    }
+
+    function updateInterfaceLanguage(lang) {
+        const placeholders = {
+            'en': 'Chat with Sarah, your personal concierge...',
+            'hi': 'सारा से बात करें, आपकी व्यक्तिगत सहायक...'
+        };
+        
+        document.querySelector('textarea').placeholder = placeholders[lang] || placeholders['en'];
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const message = input.value.trim();
+        
+        if (!message) return;
+        
+        // Disable send button
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        // Add user message to chat
+        addMessageToChat(message, 'user');
+        
+        // Clear input
+        input.value = '';
+        autoResize(input);
+        
+        try {
+            // Get AI response
+            await generateAIResponse(message);
+        } catch (error) {
+            console.error('Error generating AI response:', error);
+            addMessageToChat('I apologize, but I encountered an error. Please try again.', 'ai');
+        } finally {
+            // Re-enable send button
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        }
+    }
+
+    function sendQuickMessage(message) {
+        document.getElementById('messageInput').value = message;
+        sendMessage();
+    }
+
+    function addMessageToChat(message, sender) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        if (sender === 'user') {
+            messageDiv.innerHTML = `
+                <div class="flex justify-end mb-4">
+                    <div class="message-bubble message-bubble-user">
+                        <p>${message}</p>
+                        <div class="text-xs text-primary-100 mt-2">
+                            <span>${currentTime}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div class="flex items-start space-x-3 mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-br from-accent to-accent-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user-tie text-white text-sm"></i>
+                    </div>
+                    <div class="max-w-md">
+                        <div class="message-bubble message-bubble-ai">
+                            <div class="ai-response-content">${message}</div>
+                        </div>
+                        <div class="text-xs text-text-secondary mt-2">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>${currentTime}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function generateAIResponse(userMessage) {
+        try {
+            if (!openAIService) {
+                throw new Error('OpenAI service not initialized');
+            }
+
+            // Show typing indicator
+            addTypingIndicator();
+
+            // Get AI response
+            const aiResult = await openAIService.sendMessage(userMessage);
+            
+            // Remove typing indicator
+            removeTypingIndicator();
+
+            // Add AI response to chat
+            addMessageToChat(aiResult.response, 'ai');
+
+            // Handle follow-up actions based on intent
+            if (aiResult.requiresAction) {
+                await handleFollowUpActions(aiResult.intent, userMessage);
+            }
+
+            // Store conversation
+            conversationHistory.push({
+                user: userMessage,
+                ai: aiResult.response,
+                intent: aiResult.intent,
+                timestamp: new Date().toISOString()
+            });
+
+        } catch (error) {
+            removeTypingIndicator();
+            console.error('Error in generateAIResponse:', error);
+            addMessageToChat('I apologize, but I encountered an error. Please try again or contact our staff for assistance.', 'ai');
+        }
+    }
+
+    function addTypingIndicator() {
+        const chatMessages = document.getElementById('chatMessages');
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = `
+            <div class="flex items-start space-x-3 mb-6">
+                <div class="w-10 h-10 bg-gradient-to-br from-accent to-accent-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-user-tie text-white text-sm"></i>
+                </div>
+                <div class="max-w-md">
+                    <div class="message-bubble message-bubble-ai">
+                        <div class="flex items-center space-x-2">
+                            <div class="typing-dots">
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
+                            <span class="text-sm text-text-secondary">Sarah is typing...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        const typingIndicator = document.getElementById('typingIndicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+    }
+
+    async function handleFollowUpActions(intent, userMessage) {
+        try {
+            switch (intent) {
+                case 'weather':
+                    await handleWeatherRequest();
+                    break;
+                case 'directions':
+                    await handleDirectionsRequest(userMessage);
+                    break;
+                case 'restaurant':
+                    await handleRestaurantRequest(userMessage);
+                    break;
+                case 'transportation':
+                    await handleTransportationRequest(userMessage);
+                    break;
+            }
+        } catch (error) {
+            console.error('Error handling follow-up actions:', error);
+        }
+    }
+
+    async function handleWeatherRequest() {
+        try {
+            const weatherData = await weatherService.getCurrentWeather();
+            const weatherCard = weatherService.generateWeatherCard(weatherData);
+            addCardToChat(weatherCard);
+        } catch (error) {
+            console.error('Error fetching weather:', error);
+        }
+    }
+
+    async function handleDirectionsRequest(userMessage) {
+        try {
+            // Extract destination from user message (simple approach)
+            const destination = extractDestinationFromMessage(userMessage);
+            if (destination) {
+                const directions = await mapsService.getDirections(destination);
+                const directionsCard = mapsService.generateDirectionsCard(directions);
+                addCardToChat(directionsCard);
+            }
+        } catch (error) {
+            console.error('Error getting directions:', error);
+        }
+    }
+
+    async function handleRestaurantRequest(userMessage) {
+        try {
+            const restaurants = await mapsService.searchNearbyPlaces(userMessage, 'restaurant');
+            if (restaurants.length > 0) {
+                const restaurantCard = generateRestaurantCard(restaurants[0]);
+                addCardToChat(restaurantCard);
+            }
+        } catch (error) {
+            console.error('Error searching restaurants:', error);
+        }
+    }
+
+    async function handleTransportationRequest(userMessage) {
+        const transportCard = generateTransportationCard();
+        addCardToChat(transportCard);
+    }
+
+    function extractDestinationFromMessage(message) {
+        // Simple extraction - in production, use NLP
+        const patterns = [
+            /(?:directions? to|route to|how to get to|show me the way to)\s+(.+)/i,
+            /(?:go to|visit|reach)\s+(.+)/i,
+            /(.+?)(?:\s+directions?|\s+address|\s+location)?$/i
+        ];
+        
+        for (const pattern of patterns) {
+            const match = message.match(pattern);
+            if (match && match[1]) {
+                return match[1].trim();
+            }
+        }
+        return null;
+    }
+
+    function addCardToChat(cardHtml) {
+        const chatMessages = document.getElementById('chatMessages');
+        const cardDiv = document.createElement('div');
+        const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        cardDiv.innerHTML = `
+            <div class="flex items-start space-x-3 mb-6">
+                <div class="w-10 h-10 bg-gradient-to-br from-accent to-accent-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-user-tie text-white text-sm"></i>
+                </div>
+                <div class="max-w-md w-full">
+                    ${cardHtml}
+                    <div class="text-xs text-text-secondary mt-2">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span>${currentTime}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        chatMessages.appendChild(cardDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function generateRestaurantCard(restaurant) {
+        const image = restaurant.photos && restaurant.photos.length > 0 
+            ? restaurant.photos[0] 
+            : 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop';
+            
+        const priceText = ['Free', '$', '$$', '$$$', '$$$$'][restaurant.priceLevel] || '$$';
+            
+        return `
+            <div class="bg-white border border-secondary-200 rounded-lg p-4 shadow-sm">
+                <div class="flex items-center space-x-3 mb-3">
+                    <img src="${image}" alt="${restaurant.name}" class="w-16 h-16 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-text-primary">${restaurant.name}</h4>
+                        <div class="flex items-center space-x-2 mb-1">
+                            <div class="flex text-accent">
+                                ${Array(Math.floor(restaurant.rating)).fill('<i class="fas fa-star text-xs"></i>').join('')}
+                                ${restaurant.rating % 1 >= 0.5 ? '<i class="fas fa-star-half-alt text-xs"></i>' : ''}
+                            </div>
+                            <span class="text-sm text-text-secondary">${restaurant.rating}</span>
+                        </div>
+                        <p class="text-sm text-text-secondary">${restaurant.distance} km away • ${priceText}</p>
+                    </div>
+                </div>
+                <p class="text-sm text-text-secondary mb-3">${restaurant.address}</p>
+                <div class="flex space-x-2">
+                    <button class="btn-primary text-sm px-4 py-2 flex-1" onclick="bookRestaurant('${restaurant.name}')">
+                        <i class="fas fa-calendar-check mr-2"></i>Book Table
+                    </button>
+                    <button class="btn-secondary text-sm px-4 py-2" onclick="getDirections('${restaurant.address}')">
+                        <i class="fas fa-directions mr-2"></i>Directions
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function generateTransportationCard() {
+        return `
+            <div class="bg-white border border-secondary-200 rounded-lg p-4 shadow-sm">
+                <h4 class="font-semibold text-text-primary mb-3">Transportation Options</h4>
+                <div class="space-y-3">
+                    <div class="transport-option" onclick="bookCab('uber')">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
+                                <i class="fas fa-car text-white text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-medium text-text-primary">Uber</h5>
+                                <p class="text-sm text-text-secondary">Estimated: ₹200-300 • 5 min pickup</p>
+                            </div>
+                            <div class="text-right">
+                                <button class="btn-primary text-sm px-3 py-1">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="transport-option" onclick="bookCab('ola')">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+                                <i class="fas fa-taxi text-white text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-medium text-text-primary">Ola</h5>
+                                <p class="text-sm text-text-secondary">Estimated: ₹180-280 • 4 min pickup</p>
+                            </div>
+                            <div class="text-right">
+                                <button class="btn-primary text-sm px-3 py-1">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="transport-option" onclick="bookHotelCar()">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                                <i class="fas fa-car-side text-white text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-medium text-text-primary">Hotel Car Service</h5>
+                                <p class="text-sm text-text-secondary">Premium service • Call to book</p>
+                            </div>
+                            <div class="text-right">
+                                <button class="btn-secondary text-sm px-3 py-1">Call Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function bookRestaurant(name) {
+        sendQuickMessage(`Sarah, I'd like to book a table at ${name}`);
+    }
+
+    function getDirections(address) {
+        sendQuickMessage(`Sarah, can you show me directions to ${address}?`);
+    }
+
+    function bookCab(service) {
+        const serviceNames = {
+            'uber': 'Uber',
+            'ola': 'Ola'
+        };
+        sendQuickMessage(`Sarah, can you book me a ${serviceNames[service]} cab?`);
+    }
+
+    function bookHotelCar() {
+        sendQuickMessage('Sarah, I would like to book the hotel car service');
+    }
+
+    function openInGoogleMaps(destination) {
+        const encodedDestination = encodeURIComponent(destination);
+        const mapsUrl = `https://www.google.com/maps/dir/${CONFIG.HOTEL.address}/${encodedDestination}`;
+        window.open(mapsUrl, '_blank');
+    }
+
+    function shareDirections(destination) {
+        if (navigator.share) {
+            navigator.share({
+                title: 'Directions',
+                text: `Directions from ${CONFIG.HOTEL.name} to ${destination}`,
+                url: window.location.href
+            });
+        } else {
+            // Fallback for browsers without Web Share API
+            const text = `Directions from ${CONFIG.HOTEL.name} to ${destination}`;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Directions copied to clipboard!', 'success');
+            });
+        }
+    }
+
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 toast-notification z-50';
+        
+        const icons = {
+            'success': 'fas fa-check',
+            'error': 'fas fa-exclamation-triangle',
+            'warning': 'fas fa-exclamation-circle',
+            'info': 'fas fa-info-circle'
+        };
+        
+        const colors = {
+            'success': 'success',
+            'error': 'error',
+            'warning': 'warning',
+            'info': 'primary'
+        };
+        
+        toast.innerHTML = `
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-${colors[type]}-100 rounded-full flex items-center justify-center">
+                    <i class="${icons[type]} text-${colors[type]} text-sm"></i>
+                </div>
+                <p class="font-medium text-text-primary">${message}</p>
+                <button onclick="this.parentElement.parentElement.remove()" class="text-text-secondary hover:text-text-primary">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 5000);
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
+    }
+
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+
+    function toggleMobileMenu() {
+        const overlay = document.getElementById('mobileMenuOverlay');
+        const menu = document.getElementById('mobileMenu');
+        
+        if (menu.classList.contains('translate-x-full')) {
+            overlay.classList.remove('hidden');
+            menu.classList.remove('translate-x-full');
+        } else {
+            overlay.classList.add('hidden');
+            menu.classList.add('translate-x-full');
+        }
+    }
+
+    function dismissToast(toastId) {
+        const toast = document.getElementById(toastId);
+        if (toast) {
+            toast.classList.add('hidden');
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Initialize services
+        await initializeServices();
+        
+        // Initialize speech recognition
+        initializeSpeechRecognition();
+        
+        // Load guest profile from localStorage
+        const guestProfile = JSON.parse(localStorage.getItem('guestProfile') || '{}');
+        if (guestProfile.name) {
+            document.getElementById('guestName').textContent = guestProfile.name;
+        }
+        if (guestProfile.roomNumber) {
+            document.getElementById('roomNumber').textContent = `Room ${guestProfile.roomNumber}`;
+        }
+        if (guestProfile.language) {
+            switchLanguage(guestProfile.language);
+        }
+        
+        // Update OpenAI service with guest profile
+        if (openAIService && Object.keys(guestProfile).length > 0) {
+            openAIService.updateGuestProfile(guestProfile);
+        }
+        
+        // Update welcome time
+        const now = new Date();
+        document.getElementById('welcomeTime').textContent = `Today, ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        
+        // Show personalized welcome message with current weather
+        setTimeout(async () => {
+            try {
+                const guestName = guestProfile.name || 'there';
+                const hour = new Date().getHours();
+                let greeting = 'Good morning';
+                if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
+                if (hour >= 17) greeting = 'Good evening';
+                
+                const weatherData = await weatherService.getCurrentWeather();
+                const welcomeMessage = `${greeting}, ${guestName}! I'm Sarah, your personal concierge here at Grand Palace Hotel. It's currently ${weatherData.temperature}°C and ${weatherData.description} outside - ${weatherData.temperature > 25 ? 'perfect weather for exploring!' : 'great weather to enjoy our hotel amenities!'} How can I make your day wonderful? 😊`;
+                
+                // Replace the default welcome message
+                const welcomeMessageElement = document.querySelector('.message-bubble-ai p');
+                if (welcomeMessageElement) {
+                    welcomeMessageElement.innerHTML = welcomeMessage;
+                }
+            } catch (error) {
+                console.error('Error loading personalized welcome:', error);
+            }
+        }, 1000);
+    });
+
+    // Add CSS for enhanced styling
+    const style = document.createElement('style');
+    style.textContent = `
+        .typing-dots {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .typing-dots .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--color-accent);
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dots .dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots .dot:nth-child(2) { animation-delay: -0.16s; }
+        .typing-dots .dot:nth-child(3) { animation-delay: 0s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .transport-option {
+            @apply p-3 border border-secondary-200 rounded-lg cursor-pointer transition-all duration-150 ease-out;
+        }
+        
+        .transport-option:hover {
+            @apply bg-secondary-50 border-secondary-300;
+        }
+
+        .message-bubble-ai {
+            @apply relative;
+        }
+
+        .message-bubble-ai::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 12px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #f8fafc;
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+
+<div class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
+<div class="fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform translate-x-full transition-transform duration-300 z-50" id="mobileMenu">
+    <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold text-primary">Navigation</h3>
+            <button onclick="toggleMobileMenu()" class="p-2 text-text-secondary hover:text-primary">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="space-y-4">
+            <a href="ai_concierge_chat_dashboard.html" class="nav-link active">
+                <i class="fas fa-comments mr-3"></i>
+                Chat with Sarah
+            </a>
+            <a href="local_recommendations_booking_hub.html" class="nav-link">
+                <i class="fas fa-map-marked-alt mr-3"></i>
+                Local Recommendations
+            </a>
+            <a href="transportation_weather_services.html" class="nav-link">
+                <i class="fas fa-car mr-3"></i>
+                Transportation & Weather
+            </a>
+            <a href="hotel_services_guest_support.html" class="nav-link">
+                <i class="fas fa-concierge-bell mr-3"></i>
+                Hotel Services
+            </a>
+            <a href="guest_authentication_profile_setup.html" class="nav-link">
+                <i class="fas fa-user-cog mr-3"></i>
+                Profile Settings
+            </a>
+        </nav>
+    </div>
+</div>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

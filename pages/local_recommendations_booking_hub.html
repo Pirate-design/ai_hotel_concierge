@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Recommendations & Booking Hub - AI Hotel Concierge</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Faihotelc1567back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.6"></script>
+</head>
+<body class="bg-surface min-h-screen font-inter">
+    <!-- Header with Hotel Logo -->
+    <header class="bg-white shadow-subtle sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 11 1.16-.21 2.31-.48 3.38-.84C18.68 26.12 22 21.67 22 17V7l-10-5z"/>
+                            <path d="M12 4.5L4.5 8.5v8.5c0 4.14 2.86 7.5 6.5 8.25V4.5h1z" fill="currentColor" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-primary">Grand Palace Hotel</h1>
+                        <p class="text-xs text-text-secondary">Local Discovery Hub</p>
+                    </div>
+                </div>
+                
+                <!-- Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="ai_concierge_chat_dashboard.html" class="text-text-secondary hover:text-primary transition-colors">
+                        <i class="fas fa-comments mr-2"></i>Chat
+                    </a>
+                    <a href="local_recommendations_booking_hub.html" class="text-primary font-medium">
+                        <i class="fas fa-map-marked-alt mr-2"></i>Local Guide
+                    </a>
+                    <a href="transportation_weather_services.html" class="text-text-secondary hover:text-primary transition-colors">
+                        <i class="fas fa-car mr-2"></i>Transport
+                    </a>
+                    <a href="hotel_services_guest_support.html" class="text-text-secondary hover:text-primary transition-colors">
+                        <i class="fas fa-concierge-bell mr-2"></i>Services
+                    </a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-text-secondary" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="md:hidden bg-white border-t border-secondary-200 hidden" id="mobileMenu">
+            <div class="px-4 py-3 space-y-3">
+                <a href="ai_concierge_chat_dashboard.html" class="flex items-center text-text-secondary">
+                    <i class="fas fa-comments mr-3 w-5"></i>Chat Dashboard
+                </a>
+                <a href="local_recommendations_booking_hub.html" class="flex items-center text-primary font-medium">
+                    <i class="fas fa-map-marked-alt mr-3 w-5"></i>Local Guide
+                </a>
+                <a href="transportation_weather_services.html" class="flex items-center text-text-secondary">
+                    <i class="fas fa-car mr-3 w-5"></i>Transportation
+                </a>
+                <a href="hotel_services_guest_support.html" class="flex items-center text-text-secondary">
+                    <i class="fas fa-concierge-bell mr-3 w-5"></i>Hotel Services
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Welcome Section -->
+        <section class="mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-semibold text-text-primary mb-2">Discover Local Gems</h2>
+                    <p class="text-text-secondary">Find the best restaurants, attractions, and activities near you</p>
+                </div>
+                
+                <!-- Voice Search Button -->
+                <button class="btn-secondary flex items-center space-x-2" onclick="startVoiceSearch()">
+                    <i class="fas fa-microphone"></i>
+                    <span>Voice Search</span>
+                    <div class="voice-indicator hidden" id="voiceIndicator"></div>
+                </button>
+            </div>
+        </section>
+
+        <!-- Search and Filter Section -->
+        <section class="mb-6">
+            <div class="conversation-card">
+                <!-- Search Bar -->
+                <div class="mb-4">
+                    <div class="relative">
+                        <input type="text" id="searchInput" class="input-field pl-12 pr-4" placeholder="Search restaurants, attractions, or activities..." />
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary hover:text-primary" onclick="clearSearch()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Chips -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm font-medium text-text-primary">Filters:</span>
+                        <button class="quick-action-pill text-xs" onclick="resetFilters()">
+                            <i class="fas fa-undo mr-1"></i>Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scrollable Filter Categories -->
+                <div class="space-y-3">
+                    <!-- Cuisine Type Filters -->
+                    <div>
+                        <h4 class="text-sm font-medium text-text-primary mb-2">Cuisine</h4>
+                        <div class="flex space-x-2 overflow-x-auto pb-2" id="cuisineFilters">
+                            <button class="filter-chip active" data-filter="all">All</button>
+                            <button class="filter-chip" data-filter="indian">Indian</button>
+                            <button class="filter-chip" data-filter="chinese">Chinese</button>
+                            <button class="filter-chip" data-filter="italian">Italian</button>
+                            <button class="filter-chip" data-filter="continental">Continental</button>
+                            <button class="filter-chip" data-filter="street-food">Street Food</button>
+                        </div>
+                    </div>
+
+                    <!-- Price Range Filters -->
+                    <div>
+                        <h4 class="text-sm font-medium text-text-primary mb-2">Price Range</h4>
+                        <div class="flex space-x-2 overflow-x-auto pb-2" id="priceFilters">
+                            <button class="filter-chip active" data-filter="all">All</button>
+                            <button class="filter-chip" data-filter="budget">₹ Budget (₹200-500)</button>
+                            <button class="filter-chip" data-filter="mid">₹₹ Mid-range (₹500-1000)</button>
+                            <button class="filter-chip" data-filter="premium">₹₹₹ Premium (₹1000+)</button>
+                        </div>
+                    </div>
+
+                    <!-- Distance Filters -->
+                    <div>
+                        <h4 class="text-sm font-medium text-text-primary mb-2">Distance</h4>
+                        <div class="flex space-x-2 overflow-x-auto pb-2" id="distanceFilters">
+                            <button class="filter-chip active" data-filter="all">All</button>
+                            <button class="filter-chip" data-filter="walking">Walking (0-1km)</button>
+                            <button class="filter-chip" data-filter="nearby">Nearby (1-5km)</button>
+                            <button class="filter-chip" data-filter="city">City-wide (5km+)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Panel - Tabs and Results -->
+            <div class="lg:col-span-2">
+                <!-- Tab Navigation -->
+                <div class="conversation-card mb-6">
+                    <div class="flex space-x-1 bg-secondary-100 rounded-lg p-1">
+                        <button class="tab-button active" data-tab="restaurants" onclick="switchTab('restaurants')">
+                            <i class="fas fa-utensils mr-2"></i>Restaurants
+                        </button>
+                        <button class="tab-button" data-tab="attractions" onclick="switchTab('attractions')">
+                            <i class="fas fa-camera mr-2"></i>Attractions
+                        </button>
+                        <button class="tab-button" data-tab="activities" onclick="switchTab('activities')">
+                            <i class="fas fa-hiking mr-2"></i>Activities
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Grid -->
+                <div class="space-y-4" id="resultsContainer">
+                    <!-- Restaurants Tab Content -->
+                    <div class="tab-content active" id="restaurants">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Restaurant Card 1 -->
+                            <div class="venue-card" onclick="openVenueDetails('restaurant1')">
+                                <div class="relative overflow-hidden rounded-lg mb-3">
+                                    <img src="https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Spice Garden Restaurant" class="w-full h-48 object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                    <div class="absolute top-3 right-3 bg-white rounded-full px-2 py-1 text-xs font-medium">
+                                        <i class="fas fa-star text-warning mr-1"></i>4.5
+                                    </div>
+                                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                                        0.8 km away
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-text-primary">Spice Garden Restaurant</h3>
+                                    <p class="text-sm text-text-secondary">Authentic Indian Cuisine • Fine Dining</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-accent font-medium">₹₹ ₹800-1200 for two</span>
+                                        <span class="text-xs text-success bg-success-50 px-2 py-1 rounded">Open Now</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Restaurant Card 2 -->
+                            <div class="venue-card" onclick="openVenueDetails('restaurant2')">
+                                <div class="relative overflow-hidden rounded-lg mb-3">
+                                    <img src="https://images.pixabay.com/photo/2017/01/26/02/06/platter-2009590_1280.jpg?auto=compress&cs=tinysrgb&w=400" alt="Dragon Palace" class="w-full h-48 object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                    <div class="absolute top-3 right-3 bg-white rounded-full px-2 py-1 text-xs font-medium">
+                                        <i class="fas fa-star text-warning mr-1"></i>4.2
+                                    </div>
+                                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                                        1.2 km away
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-text-primary">Dragon Palace</h3>
+                                    <p class="text-sm text-text-secondary">Chinese Cuisine • Family Restaurant</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-accent font-medium">₹ ₹400-600 for two</span>
+                                        <span class="text-xs text-success bg-success-50 px-2 py-1 rounded">Open Now</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Restaurant Card 3 -->
+                            <div class="venue-card" onclick="openVenueDetails('restaurant3')">
+                                <div class="relative overflow-hidden rounded-lg mb-3">
+                                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=compress&cs=tinysrgb&w=400" alt="Bella Vista" class="w-full h-48 object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                    <div class="absolute top-3 right-3 bg-white rounded-full px-2 py-1 text-xs font-medium">
+                                        <i class="fas fa-star text-warning mr-1"></i>4.7
+                                    </div>
+                                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                                        2.1 km away
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-text-primary">Bella Vista</h3>
+                                    <p class="text-sm text-text-secondary">Italian Cuisine • Rooftop Dining</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-accent font-medium">₹₹₹ ₹1200-1800 for two</span>
+                                        <span class="text-xs text-warning bg-warning-50 px-2 py-1 rounded">Busy</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Restaurant Card 4 -->
+                            <div class="venue-card" onclick="openVenueDetails('restaurant4')">
+                                <div class="relative overflow-hidden rounded-lg mb-3">
+                                    <img src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Street Food Corner" class="w-full h-48 object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                    <div class="absolute top-3 right-3 bg-white rounded-full px-2 py-1 text-xs font-medium">
+                                        <i class="fas fa-star text-warning mr-1"></i>4.3
+                                    </div>
+                                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                                        0.5 km away
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-text-primary">Street Food Corner</h3>
+                                    <p class="text-sm text-text-secondary">Local Street Food • Quick Bites</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-accent font-medium">₹ ₹150-300 for two</span>
+                                        <span class="text-xs text-success bg-success-50 px-2 py-1 rounded">Open Now</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attractions Tab Content -->
+                    <div class="tab-content hidden" id="attractions">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Attraction Card 1 -->
+                            <div class="venue-card" onclick="openVenueDetails('attraction1')">
+                                <div class="relative overflow-hidden rounded-lg mb-3">
+                                    <img src="https://images.pixabay.com/photo/2020/02/06/20/01/university-4825366_1280.jpg?auto=compress&cs=tinysrgb&w=400" alt="City Palace Museum" class="w-full h-48 object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                    <div class="absolute top-3 right-3 bg-white rounded-full px-2 py-1 text-xs font-medium">
+                                        <i class="fas fa-star text-warning mr-1"></i>4.6
+                                    </div>
+                                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                                        3.2 km away
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-text-primary">City Palace Museum</h3>
+                                    <p class="text-sm text-text-secondary">Historical Monument • Cultural Heritage</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-accent font-medium">₹200 Entry Fee</span>
+                                        <span class="text-xs text-success bg-success-50 px-2 py-1 rounded">Open</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Attraction Card 2 -->
+                            <div class="venue-card" onclick="openVenueDetails('attraction2')">
+                                <div class="relative overflow-hidden rounded-lg mb-3">
+                                    <img src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=compress&cs=tinysrgb&w=400" alt="Botanical Gardens" class="w-full h-48 object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                    <div class="absolute top-3 right-3 bg-white rounded-full px-2 py-1 text-xs font-medium">
+                                        <i class="fas fa-star text-warning mr-1"></i>4.4
+                                    </div>
+                                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                                        2.8 km away
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-text-primary">Botanical Gardens</h3>
+                                    <p class="text-sm text-text-secondary">Nature Park • Family Friendly</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-accent font-medium">₹50 Entry Fee</span>
+                                        <span class="text-xs text-success bg-success-50 px-2 py-1 rounded">Open</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activities Tab Content -->
+                    <div class="tab-content hidden" id="activities">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Activity Card 1 -->
+                            <div class="venue-card" onclick="openVenueDetails('activity1')">
+                                <div class="relative overflow-hidden rounded-lg mb-3">
+                                    <img src="https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Adventure Sports Center" class="w-full h-48 object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                    <div class="absolute top-3 right-3 bg-white rounded-full px-2 py-1 text-xs font-medium">
+                                        <i class="fas fa-star text-warning mr-1"></i>4.8
+                                    </div>
+                                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                                        5.1 km away
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-text-primary">Adventure Sports Center</h3>
+                                    <p class="text-sm text-text-secondary">Rock Climbing • Zip Line • Rappelling</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-accent font-medium">₹1500-3000 per person</span>
+                                        <span class="text-xs text-success bg-success-50 px-2 py-1 rounded">Available</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Activity Card 2 -->
+                            <div class="venue-card" onclick="openVenueDetails('activity2')">
+                                <div class="relative overflow-hidden rounded-lg mb-3">
+                                    <img src="https://images.pixabay.com/photo/2017/08/06/12/06/people-2591874_1280.jpg?auto=compress&cs=tinysrgb&w=400" alt="Cooking Class Studio" class="w-full h-48 object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                    <div class="absolute top-3 right-3 bg-white rounded-full px-2 py-1 text-xs font-medium">
+                                        <i class="fas fa-star text-warning mr-1"></i>4.7
+                                    </div>
+                                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                                        1.8 km away
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-text-primary">Cooking Class Studio</h3>
+                                    <p class="text-sm text-text-secondary">Learn Indian Cuisine • Hands-on Experience</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-accent font-medium">₹800-1200 per person</span>
+                                        <span class="text-xs text-success bg-success-50 px-2 py-1 rounded">Available</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Map (Desktop) -->
+            <div class="lg:col-span-1">
+                <div class="conversation-card sticky top-24">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-text-primary">Map View</h3>
+                        <button class="text-text-secondary hover:text-primary" onclick="toggleMapFullscreen()">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Map Container -->
+                    <div class="relative bg-secondary-100 rounded-lg overflow-hidden" style="height: 400px;" id="mapContainer">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <i class="fas fa-map-marked-alt text-4xl text-text-secondary mb-3"></i>
+                                <p class="text-text-secondary">Interactive Map</p>
+                                <p class="text-sm text-text-secondary">Showing nearby venues</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Map Markers (Simulated) -->
+                        <div class="absolute top-4 left-4 w-3 h-3 bg-error rounded-full animate-pulse"></div>
+                        <div class="absolute top-12 right-8 w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+                        <div class="absolute bottom-8 left-8 w-3 h-3 bg-accent rounded-full animate-pulse"></div>
+                        <div class="absolute bottom-4 right-4 w-3 h-3 bg-success rounded-full animate-pulse"></div>
+                    </div>
+
+                    <!-- Map Legend -->
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <div class="w-3 h-3 bg-error rounded-full"></div>
+                            <span class="text-text-secondary">Restaurants</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <div class="w-3 h-3 bg-primary rounded-full"></div>
+                            <span class="text-text-secondary">Attractions</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <div class="w-3 h-3 bg-accent rounded-full"></div>
+                            <span class="text-text-secondary">Activities</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <div class="w-3 h-3 bg-success rounded-full"></div>
+                            <span class="text-text-secondary">Your Hotel</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Map Toggle (Mobile Only) -->
+        <div class="lg:hidden mt-6">
+            <button class="w-full conversation-card text-left" onclick="toggleMobileMap()">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-map text-primary"></i>
+                        <span class="font-medium text-text-primary">View on Map</span>
+                    </div>
+                    <i class="fas fa-chevron-down transform transition-transform" id="mobileMapIcon"></i>
+                </div>
+            </button>
+            
+            <div class="hidden mt-4" id="mobileMapContainer">
+                <div class="conversation-card">
+                    <div class="relative bg-secondary-100 rounded-lg overflow-hidden" style="height: 300px;">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <i class="fas fa-map-marked-alt text-3xl text-text-secondary mb-2"></i>
+                                <p class="text-text-secondary">Interactive Map</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile Map Markers -->
+                        <div class="absolute top-4 left-4 w-3 h-3 bg-error rounded-full animate-pulse"></div>
+                        <div class="absolute top-12 right-8 w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+                        <div class="absolute bottom-8 left-8 w-3 h-3 bg-accent rounded-full animate-pulse"></div>
+                        <div class="absolute bottom-4 right-4 w-3 h-3 bg-success rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating AI Chat Button -->
+    <button class="fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg hover:bg-primary-700 transition-all duration-150 ease-out z-40" onclick="openAIChat()">
+        <i class="fas fa-robot text-xl"></i>
+    </button>
+
+    <!-- Venue Details Modal -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" id="venueModal" onclick="closeVenueDetails()">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto" onclick="event.stopPropagation()">
+                <div class="p-6">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-semibold text-text-primary" id="modalTitle">Venue Details</h3>
+                        <button class="text-text-secondary hover:text-text-primary" onclick="closeVenueDetails()">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <!-- Modal Content -->
+                    <div id="modalContent">
+                        <!-- Content will be dynamically loaded -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Confirmation Toast -->
+    <div class="fixed top-4 right-4 toast-notification hidden z-50" id="bookingToast">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-success text-sm"></i>
+            </div>
+            <div>
+                <p class="font-medium text-text-primary">Booking Confirmed!</p>
+                <p class="text-sm text-text-secondary">Check your email for details</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .filter-chip {
+            @apply px-3 py-1 rounded-full border border-secondary-200 text-sm text-text-secondary bg-white transition-all duration-150 ease-out cursor-pointer whitespace-nowrap;
+        }
+        
+        .filter-chip.active {
+            @apply bg-primary text-white border-primary;
+        }
+        
+        .filter-chip:hover:not(.active) {
+            @apply bg-secondary-100 border-secondary-300;
+        }
+        
+        .tab-button {
+            @apply flex-1 px-4 py-2 rounded-md text-sm font-medium text-text-secondary transition-all duration-150 ease-out cursor-pointer;
+        }
+        
+        .tab-button.active {
+            @apply bg-white text-primary shadow-sm;
+        }
+        
+        .tab-button:hover:not(.active) {
+            @apply text-text-primary;
+        }
+        
+        .venue-card {
+            @apply conversation-card cursor-pointer;
+        }
+        
+        .venue-card:hover {
+            @apply shadow-elevated;
+            transform: translateY(-2px);
+        }
+        
+        .tab-content {
+            @apply transition-all duration-300 ease-out;
+        }
+        
+        .tab-content.hidden {
+            @apply opacity-0;
+        }
+        
+        .tab-content.active {
+            @apply opacity-100;
+        }
+    </style>
+
+    <script>
+        let currentTab = 'restaurants';
+        let activeFilters = {
+            cuisine: 'all',
+            price: 'all',
+            distance: 'all'
+        };
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                content.classList.add('hidden');
+            });
+            document.getElementById(tabName).classList.remove('hidden');
+            document.getElementById(tabName).classList.add('active');
+
+            currentTab = tabName;
+        }
+
+        function startVoiceSearch() {
+            const voiceIndicator = document.getElementById('voiceIndicator');
+            const button = event.target.closest('button');
+            
+            voiceIndicator.classList.remove('hidden');
+            button.querySelector('span').textContent = 'Listening...';
+            
+            // Simulate voice recognition
+            setTimeout(() => {
+                voiceIndicator.classList.add('hidden');
+                button.querySelector('span').textContent = 'Voice Search';
+                document.getElementById('searchInput').value = 'Italian restaurants nearby';
+                showToast('Voice search completed!', 'success');
+            }, 3000);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+        }
+
+        function resetFilters() {
+            // Reset all filter chips
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            
+            // Activate "All" chips
+            document.querySelectorAll('.filter-chip[data-filter="all"]').forEach(chip => {
+                chip.classList.add('active');
+            });
+            
+            activeFilters = {
+                cuisine: 'all',
+                price: 'all',
+                distance: 'all'
+            };
+        }
+
+        function toggleMobileMap() {
+            const container = document.getElementById('mobileMapContainer');
+            const icon = document.getElementById('mobileMapIcon');
+            
+            container.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        function toggleMapFullscreen() {
+            // Simulate fullscreen map toggle
+            showToast('Map fullscreen mode', 'info');
+        }
+
+        function openVenueDetails(venueId) {
+            const modal = document.getElementById('venueModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+            
+            // Sample venue data
+            const venueData = {
+                restaurant1: {
+                    title: 'Spice Garden Restaurant',
+                    image: 'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=600',
+                    rating: 4.5,
+                    cuisine: 'Authentic Indian Cuisine',
+                    price: '₹800-1200 for two',
+                    distance: '0.8 km away',
+                    description: 'Experience the finest Indian cuisine with traditional recipes passed down through generations. Our chefs use authentic spices and cooking methods.',
+                    highlights: ['Tandoor Specialties', 'Vegetarian Options', 'Live Music', 'Rooftop Seating'],
+                    timings: 'Open: 12:00 PM - 11:00 PM',
+                    contact: '+91 98765 43210'
+                },
+                restaurant2: {
+                    title: 'Dragon Palace',
+                    image: 'https://images.pixabay.com/photo/2017/01/26/02/06/platter-2009590_1280.jpg',
+                    rating: 4.2,
+                    cuisine: 'Chinese Cuisine',
+                    price: '₹400-600 for two',
+                    distance: '1.2 km away',
+                    description: 'Authentic Chinese flavors in a family-friendly atmosphere. Fresh ingredients and traditional cooking techniques.',
+                    highlights: ['Dim Sum', 'Noodle Bar', 'Family Portions', 'Quick Service'],
+                    timings: 'Open: 11:00 AM - 10:30 PM',
+                    contact: '+91 98765 43211'
+                }
+            };
+            
+            const venue = venueData[venueId] || venueData.restaurant1;
+            
+            modalTitle.textContent = venue.title;
+            modalContent.innerHTML = `
+                <div class="space-y-6">
+                    <div class="relative overflow-hidden rounded-lg">
+                        <img src="${venue.image}" alt="${venue.title}" class="w-full h-64 object-cover">
+                        <div class="absolute top-4 right-4 bg-white rounded-full px-3 py-1 text-sm font-medium">
+                            <i class="fas fa-star text-warning mr-1"></i>${venue.rating}
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-semibold text-text-primary mb-2">About</h4>
+                            <p class="text-text-secondary">${venue.description}</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h5 class="font-medium text-text-primary mb-2">Details</h5>
+                                <div class="space-y-2 text-sm">
+                                    <p><i class="fas fa-utensils mr-2 text-accent"></i>${venue.cuisine}</p>
+                                    <p><i class="fas fa-rupee-sign mr-2 text-accent"></i>${venue.price}</p>
+                                    <p><i class="fas fa-map-marker-alt mr-2 text-accent"></i>${venue.distance}</p>
+                                    <p><i class="fas fa-clock mr-2 text-accent"></i>${venue.timings}</p>
+                                    <p><i class="fas fa-phone mr-2 text-accent"></i>${venue.contact}</p>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 class="font-medium text-text-primary mb-2">Highlights</h5>
+                                <div class="flex flex-wrap gap-2">
+                                    ${venue.highlights.map(highlight => 
+                                        `<span class="px-2 py-1 bg-accent-50 text-accent-700 rounded text-xs">${highlight}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-secondary-200 pt-4">
+                            <h5 class="font-medium text-text-primary mb-3">Book a Table</h5>
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-text-primary mb-1">Date</label>
+                                    <input type="date" class="input-field text-sm" value="2025-08-03">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-text-primary mb-1">Time</label>
+                                    <select class="input-field text-sm">
+                                        <option>7:00 PM</option>
+                                        <option>7:30 PM</option>
+                                        <option>8:00 PM</option>
+                                        <option>8:30 PM</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-text-primary mb-1">Guests</label>
+                                    <select class="input-field text-sm">
+                                        <option>2 People</option>
+                                        <option>3 People</option>
+                                        <option>4 People</option>
+                                        <option>5+ People</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-text-primary mb-1">Special Requests</label>
+                                    <input type="text" class="input-field text-sm" placeholder="Window seat, birthday...">
+                                </div>
+                            </div>
+                            <button class="btn-primary w-full" onclick="confirmBooking('${venueId}')">
+                                <i class="fas fa-calendar-check mr-2"></i>Book Table
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVenueDetails() {
+            const modal = document.getElementById('venueModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function confirmBooking(venueId) {
+            // Simulate booking process
+            closeVenueDetails();
+            showBookingToast();
+            
+            // Store booking in localStorage
+            const booking = {
+                venueId: venueId,
+                date: new Date().toISOString(),
+                status: 'confirmed'
+            };
+            localStorage.setItem('latestBooking', JSON.stringify(booking));
+        }
+
+        function showBookingToast() {
+            const toast = document.getElementById('bookingToast');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4000);
+        }
+
+        function showToast(message, type = 'info') {
+            // Create and show a temporary toast
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 toast-notification z-50';
+            toast.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-${type === 'success' ? 'success' : 'primary'}-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-${type === 'success' ? 'check' : 'info'} text-${type === 'success' ? 'success' : 'primary'} text-sm"></i>
+                    </div>
+                    <p class="font-medium text-text-primary">${message}</p>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function openAIChat() {
+            window.location.href = 'ai_concierge_chat_dashboard.html';
+        }
+
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers to filter chips
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const filterType = this.closest('[id$="Filters"]').id.replace('Filters', '');
+                    const filterValue = this.dataset.filter;
+                    
+                    // Remove active class from siblings
+                    this.parentElement.querySelectorAll('.filter-chip').forEach(sibling => {
+                        sibling.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked chip
+                    this.classList.add('active');
+                    
+                    // Update active filters
+                    activeFilters[filterType] = filterValue;
+                    
+                    // Apply filters (in a real app, this would filter the results)
+                    console.log('Active filters:', activeFilters);
+                });
+            });
+
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                // In a real app, this would filter the venue cards
+                console.log('Searching for:', searchTerm);
+            });
+        });
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('venueModal');
+            if (event.target === modal) {
+                closeVenueDetails();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeVenueDetails();
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

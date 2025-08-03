@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guest Authentication & Profile Setup - AI Hotel Concierge</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Faihotelc1567back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.6"></script>
+</head>
+<body class="bg-surface min-h-screen font-inter">
+    <!-- Header with Hotel Logo -->
+    <header class="bg-white shadow-subtle">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 11 1.16-.21 2.31-.48 3.38-.84C18.68 26.12 22 21.67 22 17V7l-10-5z"/>
+                            <path d="M12 4.5L4.5 8.5v8.5c0 4.14 2.86 7.5 6.5 8.25V4.5h1z" fill="currentColor" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-semibold text-primary">Grand Palace Hotel</h1>
+                        <p class="text-sm text-text-secondary">AI Concierge Service</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-2xl mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <section class="text-center mb-8">
+            <h2 class="text-3xl font-semibold text-text-primary mb-3">Welcome to Your Personal Concierge</h2>
+            <p class="text-text-secondary text-lg">Get instant assistance with hotel services, local recommendations, and more</p>
+        </section>
+
+        <!-- Authentication Options -->
+        <section class="space-y-6">
+            <!-- Quick Access Card -->
+            <div class="conversation-card" id="quickAccessCard">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-accent-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-bolt text-accent-600 text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-text-primary">Quick Access</h3>
+                            <p class="text-text-secondary text-sm">Start chatting immediately</p>
+                        </div>
+                    </div>
+                    <button class="text-accent-600 hover:text-accent-700 transition-colors" onclick="toggleQuickAccess()">
+                        <i class="fas fa-chevron-down transform transition-transform" id="quickAccessIcon"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4" id="quickAccessForm">
+                    <div>
+                        <label for="roomNumber" class="block text-sm font-medium text-text-primary mb-2">Room Number</label>
+                        <input type="text" id="roomNumber" class="input-field" placeholder="e.g., 1205" maxlength="4" />
+                        <div class="text-error text-sm mt-1 hidden" id="roomError">Please enter a valid room number</div>
+                    </div>
+                    
+                    <div>
+                        <label for="guestName" class="block text-sm font-medium text-text-primary mb-2">Last Name</label>
+                        <input type="text" id="guestName" class="input-field" placeholder="e.g., Smith" />
+                        <div class="text-error text-sm mt-1 hidden" id="nameError">Please enter your last name</div>
+                    </div>
+                    
+                    <button class="btn-primary w-full" onclick="quickAccessLogin()">
+                        <i class="fas fa-comments mr-2"></i>
+                        Start Chatting
+                    </button>
+                </div>
+            </div>
+
+            <!-- Full Profile Setup Card -->
+            <div class="conversation-card" id="fullProfileCard">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-user-cog text-primary text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-text-primary">Full Profile Setup</h3>
+                            <p class="text-text-secondary text-sm">Personalized experience with preferences</p>
+                        </div>
+                    </div>
+                    <button class="text-primary hover:text-primary-700 transition-colors" onclick="toggleFullProfile()">
+                        <i class="fas fa-chevron-down transform transition-transform" id="fullProfileIcon"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6 hidden" id="fullProfileForm">
+                    <!-- Basic Information -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-text-primary border-b border-secondary-200 pb-2">Basic Information</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="fullRoomNumber" class="block text-sm font-medium text-text-primary mb-2">Room Number</label>
+                                <input type="text" id="fullRoomNumber" class="input-field" placeholder="e.g., 1205" maxlength="4" />
+                            </div>
+                            <div>
+                                <label for="fullGuestName" class="block text-sm font-medium text-text-primary mb-2">Full Name</label>
+                                <input type="text" id="fullGuestName" class="input-field" placeholder="e.g., John Smith" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Language Preference -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-text-primary border-b border-secondary-200 pb-2">Language Preference</h4>
+                        
+                        <div class="flex items-center space-x-4">
+                            <button class="language-toggle active" data-lang="en" onclick="selectLanguage('en')">
+                                <img src="https://images.unsplash.com/photo-1520637836862-4d197d17c93a?w=32&h=24&fit=crop&crop=center" alt="English" class="w-6 h-4 rounded object-cover mr-2" />
+                                English
+                            </button>
+                            <button class="language-toggle" data-lang="hi" onclick="selectLanguage('hi')">
+                                <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=32&h=24&fit=crop&crop=center" alt="Hindi" class="w-6 h-4 rounded object-cover mr-2" />
+                                हिंदी
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dietary Restrictions -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-text-primary border-b border-secondary-200 pb-2">Dietary Preferences</h4>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <label class="dietary-option">
+                                <input type="checkbox" class="hidden" value="vegetarian" />
+                                <div class="dietary-card">
+                                    <i class="fas fa-leaf text-success"></i>
+                                    <span>Vegetarian</span>
+                                </div>
+                            </label>
+                            <label class="dietary-option">
+                                <input type="checkbox" class="hidden" value="vegan" />
+                                <div class="dietary-card">
+                                    <i class="fas fa-seedling text-success"></i>
+                                    <span>Vegan</span>
+                                </div>
+                            </label>
+                            <label class="dietary-option">
+                                <input type="checkbox" class="hidden" value="gluten-free" />
+                                <div class="dietary-card">
+                                    <i class="fas fa-wheat text-warning"></i>
+                                    <span>Gluten-Free</span>
+                                </div>
+                            </label>
+                            <label class="dietary-option">
+                                <input type="checkbox" class="hidden" value="halal" />
+                                <div class="dietary-card">
+                                    <i class="fas fa-moon text-primary"></i>
+                                    <span>Halal</span>
+                                </div>
+                            </label>
+                            <label class="dietary-option">
+                                <input type="checkbox" class="hidden" value="kosher" />
+                                <div class="dietary-card">
+                                    <i class="fas fa-star text-primary"></i>
+                                    <span>Kosher</span>
+                                </div>
+                            </label>
+                            <label class="dietary-option">
+                                <input type="checkbox" class="hidden" value="none" />
+                                <div class="dietary-card">
+                                    <i class="fas fa-utensils text-text-secondary"></i>
+                                    <span>No Restrictions</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Service Preferences -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-text-primary border-b border-secondary-200 pb-2">Service Preferences</h4>
+                        
+                        <div class="space-y-3">
+                            <label class="service-preference">
+                                <input type="checkbox" class="hidden" value="voice-enabled" />
+                                <div class="preference-card">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-microphone text-accent-600"></i>
+                                        <div>
+                                            <span class="font-medium">Voice Interaction</span>
+                                            <p class="text-sm text-text-secondary">Enable voice commands and responses</p>
+                                        </div>
+                                    </div>
+                                    <div class="preference-toggle"></div>
+                                </div>
+                            </label>
+                            
+                            <label class="service-preference">
+                                <input type="checkbox" class="hidden" value="notifications" checked />
+                                <div class="preference-card">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-bell text-primary"></i>
+                                        <div>
+                                            <span class="font-medium">Push Notifications</span>
+                                            <p class="text-sm text-text-secondary">Weather alerts and booking confirmations</p>
+                                        </div>
+                                    </div>
+                                    <div class="preference-toggle active"></div>
+                                </div>
+                            </label>
+                            
+                            <label class="service-preference">
+                                <input type="checkbox" class="hidden" value="location-services" />
+                                <div class="preference-card">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-map-marker-alt text-error"></i>
+                                        <div>
+                                            <span class="font-medium">Location Services</span>
+                                            <p class="text-sm text-text-secondary">Personalized local recommendations</p>
+                                        </div>
+                                    </div>
+                                    <div class="preference-toggle"></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary w-full" onclick="createFullProfile()">
+                        <i class="fas fa-user-check mr-2"></i>
+                        Create Profile & Start
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Links -->
+        <section class="mt-12 text-center">
+            <p class="text-text-secondary mb-4">Already have a profile?</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="ai_concierge_chat_dashboard.html" class="quick-action-pill">
+                    <i class="fas fa-comments mr-2"></i>
+                    Go to Chat
+                </a>
+                <a href="local_recommendations_booking_hub.html" class="quick-action-pill">
+                    <i class="fas fa-map-marked-alt mr-2"></i>
+                    Local Guide
+                </a>
+                <a href="hotel_services_guest_support.html" class="quick-action-pill">
+                    <i class="fas fa-concierge-bell mr-2"></i>
+                    Hotel Services
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Success Toast (Hidden by default) -->
+    <div class="fixed top-4 right-4 toast-notification hidden" id="successToast">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-success text-sm"></i>
+            </div>
+            <div>
+                <p class="font-medium text-text-primary">Profile Created Successfully!</p>
+                <p class="text-sm text-text-secondary">Redirecting to your concierge...</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .language-toggle {
+            @apply flex items-center px-4 py-2 rounded-lg border border-secondary-200 text-text-secondary transition-all duration-150 ease-out cursor-pointer;
+        }
+        
+        .language-toggle.active {
+            @apply bg-primary text-white border-primary;
+        }
+        
+        .language-toggle:hover:not(.active) {
+            @apply bg-secondary-100 border-secondary-300;
+        }
+        
+        .dietary-card {
+            @apply flex flex-col items-center space-y-2 p-3 rounded-lg border border-secondary-200 text-center transition-all duration-150 ease-out cursor-pointer;
+        }
+        
+        .dietary-option input:checked + .dietary-card {
+            @apply bg-accent-50 border-accent-200 text-accent-700;
+        }
+        
+        .dietary-card:hover {
+            @apply bg-secondary-50 border-secondary-300;
+        }
+        
+        .dietary-option input:checked + .dietary-card:hover {
+            @apply bg-accent-100;
+        }
+        
+        .preference-card {
+            @apply flex items-center justify-between p-4 rounded-lg border border-secondary-200 transition-all duration-150 ease-out cursor-pointer;
+        }
+        
+        .service-preference input:checked + .preference-card {
+            @apply bg-primary-50 border-primary-200;
+        }
+        
+        .preference-card:hover {
+            @apply bg-secondary-50 border-secondary-300;
+        }
+        
+        .preference-toggle {
+            @apply w-12 h-6 bg-secondary-300 rounded-full relative transition-all duration-150 ease-out;
+        }
+        
+        .preference-toggle::after {
+            @apply content-[''] absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-all duration-150 ease-out;
+        }
+        
+        .preference-toggle.active {
+            @apply bg-primary;
+        }
+        
+        .preference-toggle.active::after {
+            @apply transform translate-x-6;
+        }
+    </style>
+
+    <script>
+        let selectedLanguage = 'en';
+        let currentForm = null;
+
+        function toggleQuickAccess() {
+            const form = document.getElementById('quickAccessForm');
+            const icon = document.getElementById('quickAccessIcon');
+            
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+                currentForm = 'quick';
+                
+                // Hide full profile if open
+                const fullForm = document.getElementById('fullProfileForm');
+                const fullIcon = document.getElementById('fullProfileIcon');
+                fullForm.classList.add('hidden');
+                fullIcon.style.transform = 'rotate(0deg)';
+            } else {
+                form.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+                currentForm = null;
+            }
+        }
+
+        function toggleFullProfile() {
+            const form = document.getElementById('fullProfileForm');
+            const icon = document.getElementById('fullProfileIcon');
+            
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+                currentForm = 'full';
+                
+                // Hide quick access if open
+                const quickForm = document.getElementById('quickAccessForm');
+                const quickIcon = document.getElementById('quickAccessIcon');
+                quickForm.classList.add('hidden');
+                quickIcon.style.transform = 'rotate(0deg)';
+            } else {
+                form.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+                currentForm = null;
+            }
+        }
+
+        function selectLanguage(lang) {
+            selectedLanguage = lang;
+            document.querySelectorAll('.language-toggle').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+            
+            // Update interface language (simplified for demo)
+            if (lang === 'hi') {
+                updateToHindi();
+            } else {
+                updateToEnglish();
+            }
+        }
+
+        function updateToHindi() {
+            // Simplified Hindi translation for key elements
+            document.querySelector('h2').textContent = 'आपके व्यक्तिगत कंसीयर्ज में आपका स्वागत है';
+            document.querySelector('h2 + p').textContent = 'होटल सेवाओं, स्थानीय सिफारिशों और अधिक के साथ तुरंत सहायता प्राप्त करें';
+        }
+
+        function updateToEnglish() {
+            document.querySelector('h2').textContent = 'Welcome to Your Personal Concierge';
+            document.querySelector('h2 + p').textContent = 'Get instant assistance with hotel services, local recommendations, and more';
+        }
+
+        function quickAccessLogin() {
+            const roomNumber = document.getElementById('roomNumber').value.trim();
+            const guestName = document.getElementById('guestName').value.trim();
+            
+            // Reset errors
+            document.getElementById('roomError').classList.add('hidden');
+            document.getElementById('nameError').classList.add('hidden');
+            
+            let isValid = true;
+            
+            if (!roomNumber || roomNumber.length < 3) {
+                document.getElementById('roomError').classList.remove('hidden');
+                isValid = false;
+            }
+            
+            if (!guestName || guestName.length < 2) {
+                document.getElementById('nameError').classList.remove('hidden');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Store user data
+                localStorage.setItem('guestProfile', JSON.stringify({
+                    roomNumber: roomNumber,
+                    name: guestName,
+                    language: selectedLanguage,
+                    profileType: 'quick',
+                    loginTime: new Date().toISOString()
+                }));
+                
+                showSuccessToast();
+                setTimeout(() => {
+                    window.location.href = 'ai_concierge_chat_dashboard.html';
+                }, 2000);
+            }
+        }
+
+        function createFullProfile() {
+            const roomNumber = document.getElementById('fullRoomNumber').value.trim();
+            const guestName = document.getElementById('fullGuestName').value.trim();
+            
+            if (!roomNumber || !guestName) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Collect dietary preferences
+            const dietaryPrefs = [];
+            document.querySelectorAll('.dietary-option input:checked').forEach(input => {
+                dietaryPrefs.push(input.value);
+            });
+            
+            // Collect service preferences
+            const servicePrefs = [];
+            document.querySelectorAll('.service-preference input:checked').forEach(input => {
+                servicePrefs.push(input.value);
+            });
+            
+            // Store comprehensive profile
+            localStorage.setItem('guestProfile', JSON.stringify({
+                roomNumber: roomNumber,
+                name: guestName,
+                language: selectedLanguage,
+                dietaryPreferences: dietaryPrefs,
+                servicePreferences: servicePrefs,
+                profileType: 'full',
+                loginTime: new Date().toISOString()
+            }));
+            
+            showSuccessToast();
+            setTimeout(() => {
+                window.location.href = 'ai_concierge_chat_dashboard.html';
+            }, 2000);
+        }
+
+        function showSuccessToast() {
+            const toast = document.getElementById('successToast');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Handle preference toggles
+        document.querySelectorAll('.service-preference').forEach(pref => {
+            pref.addEventListener('click', function() {
+                const input = this.querySelector('input');
+                const toggle = this.querySelector('.preference-toggle');
+                
+                input.checked = !input.checked;
+                toggle.classList.toggle('active', input.checked);
+            });
+        });
+
+        // Initialize with Quick Access open
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleQuickAccess();
+        });
+
+        // Real-time validation
+        document.getElementById('roomNumber').addEventListener('input', function() {
+            const error = document.getElementById('roomError');
+            if (this.value.trim().length >= 3) {
+                error.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('guestName').addEventListener('input', function() {
+            const error = document.getElementById('nameError');
+            if (this.value.trim().length >= 2) {
+                error.classList.add('hidden');
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>
