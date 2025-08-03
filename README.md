@@ -260,8 +260,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 For questions or issues:
 - Create an issue in this repository
 - Contact: concierge@grandpalacehotel.com
-- Demo: [Live Demo Link]
-
----
-
-Built with ❤️ for the Hotel Tech Hackathon 2025
